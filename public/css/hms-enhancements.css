@@ -1,0 +1,36 @@
+/* HMS optional enhancement helpers.
+   Core responsive/layout styling now lives in hms.css. */
+
+.hms-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.hms-toolbar.end {
+    justify-content: flex-end;
+}
+
+.hms-preview-actions {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+
+.hms-print-only {
+    display: none;
+}
+
+@media print {
+    .hms-no-print,
+    .hms-preview-actions {
+        display: none !important;
+    }
+
+    .hms-print-only {
+        display: block;
+    }
+}

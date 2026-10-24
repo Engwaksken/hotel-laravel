@@ -1,0 +1,3 @@
+<?php
+namespace App\Models; use Illuminate\Database\Eloquent\Model;
+class SupplierPayment extends Model{protected $fillable=['property_id','supplier_id','supplier_invoice_id','reference','payment_date','method','amount','external_reference','notes','created_by','journal_entry_id']; protected $casts=['payment_date'=>'date']; public function journalEntry(){return $this->belongsTo(JournalEntry::class);} }

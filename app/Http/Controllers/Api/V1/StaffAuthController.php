@@ -1,0 +1,7 @@
+<?php
+namespace App\Http\Controllers\Api\V1;
+use App\Http\Controllers\Controller;use App\Models\{SecurityEvent,User};use Illuminate\Http\Request;use Illuminate\Support\Facades\Hash;
+class StaffAuthController extends Controller{
+ public function login(Request $r){$d=$r->validate(['email'=>'required|email','password'=>'required|string','device_name'=>'nullable|string|max:120']);$u=User::where('email',$d['email'])->first();if(!$u||!Hash::check($d['password'],$u->password)){SecurityEvent::create(['property_id'=>$u?->property_id,'user_id'=>$u?->id,'event_type'=>'api_login_failed','severity'=>'warning','ip_address'=>$r->ip(),'user_agent'=>$r->userAgent(),'context'=>['email'=>$d['email']]]);return response()->json(['message'=>'Invalid credentials.'],422);}if(!$u->is_active)return response()->json(['message'=>'Account is inactive.'],403);if($u->guest_id && !$u->employee)return response()->json(['message'=>'This account is not a staff account.'],403);$token=$u->createToken($d['device_name']??'staff-app',['staff'])->plainTextToken;SecurityEvent::create(['property_id'=>$u->property_id,'user_id'=>$u->id,'event_type'=>'api_login_success','severity'=>'info','ip_address'=>$r->ip(),'user_agent'=>$r->userAgent()]);return response()->json(['token'=>$token,'user'=>['id'=>$u->id,'name'=>$u->name,'role'=>$u->role,'property_id'=>$u->property_id]]);}
+ public function logout(Request $r){$r->user()?->currentAccessToken()?->delete();return response()->json(['message'=>'Signed out.']);}
+}

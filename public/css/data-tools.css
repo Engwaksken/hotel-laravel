@@ -1,0 +1,43 @@
+
+/* Shared page CSV/PDF/Print toolbar */
+.page-data-tools {
+    margin: 0 0 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.page-data-tools-left,
+.page-data-tools-right {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.bulk-upload-form {
+    margin: 0;
+}
+
+.page-data-tools .btn {
+    min-height: 34px;
+}
+
+@media(max-width:680px) {
+    .page-data-tools {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .page-data-tools-left,
+    .page-data-tools-right {
+        width: 100%;
+    }
+
+    .page-data-tools .btn {
+        flex: 1;
+        justify-content: center;
+    }
+}

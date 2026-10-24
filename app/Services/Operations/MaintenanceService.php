@@ -1,0 +1,6 @@
+<?php
+namespace App\Services\Operations;
+use App\Enums\RoomStatus;use App\Models\MaintenanceRequest;use Illuminate\Support\Facades\DB;
+class MaintenanceService{
+ public function updateStatus(MaintenanceRequest $request,string $status,int $userId,?int $assignee=null,?string $resolution=null,?float $actualCost=null):MaintenanceRequest{return DB::transaction(function()use($request,$status,$userId,$assignee,$resolution,$actualCost){$data=['status'=>$status];if($assignee)$data['assigned_to']=$assignee;if($status==='in_progress')$data['started_at']=$request->started_at?:now();if($status==='resolved'){$data['resolved_at']=now();$data['resolution_notes']=$resolution;}if($status==='closed'){$data['closed_at']=now();$data['resolution_notes']=$resolution?:$request->resolution_notes;}if($actualCost!==null)$data['actual_cost']=$actualCost;$request->update($data);if($request->room){if($request->blocks_room && !in_array($status,['resolved','closed','cancelled'],true))$request->room->update(['status'=>RoomStatus::OutOfOrder]);if($request->blocks_room && in_array($status,['resolved','closed','cancelled'],true))$request->room->update(['status'=>RoomStatus::Dirty,'housekeeping_status'=>'dirty']);}return $request->fresh();});}
+}

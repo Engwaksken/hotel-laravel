@@ -1,0 +1,141 @@
+/* =========================================================
+   HMS GLOBAL MODALS + EXPORT TOOLBAR
+========================================================= */
+
+.hms-export-actions {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 7px;
+}
+
+.hms-export-actions .btn {
+    min-height: 32px;
+}
+
+.hms-modal-box.hms-modal-sm {
+    width: min(460px, 100%);
+}
+
+.hms-modal-box.hms-modal-md {
+    width: min(680px, 100%);
+}
+
+.hms-modal-box.hms-modal-lg {
+    width: min(920px, 100%);
+}
+
+.hms-modal-box.hms-modal-xl {
+    width: min(1140px, 100%);
+}
+
+.hms-modal-header {
+    padding-right: 38px;
+    margin-bottom: 14px;
+    border-bottom: 1px solid #e8edef;
+}
+
+.hms-modal-header h2 {
+    margin: 0;
+    padding-bottom: 12px;
+}
+
+.hms-modal-body {
+    min-width: 0;
+}
+
+.hms-modal-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 18px;
+}
+
+.hms-delete-warning {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px;
+    border: 1px solid #f1d0d0;
+    border-radius: 10px;
+    background: #fff7f7;
+}
+
+.hms-delete-warning p {
+    margin: 5px 0 0;
+    color: #68737c;
+    line-height: 1.55;
+}
+
+.hms-delete-icon {
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: #fde8e8;
+    color: #b42318;
+}
+
+body.hms-modal-open {
+    overflow: hidden;
+}
+
+[data-modal-open] {
+    cursor: pointer;
+}
+
+@media (max-width: 720px) {
+    .hms-modal {
+        padding: 10px;
+        align-items: flex-end;
+    }
+
+    .hms-modal-box {
+        width: 100% !important;
+        max-height: 92vh;
+        border-radius: 14px 14px 8px 8px;
+    }
+
+    .hms-modal-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .hms-modal-actions .btn {
+        width: 100%;
+    }
+}
+
+
+.hms-page-tools {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.page-head .hms-page-tools,
+.page-actions .hms-page-tools {
+    margin-left: auto;
+}
+
+@media (max-width: 720px) {
+    .hms-page-tools {
+        width: 100%;
+        justify-content: stretch;
+    }
+
+    .hms-page-tools > *,
+    .hms-page-tools .hms-export-actions {
+        flex: 1 1 auto;
+    }
+
+    .hms-page-tools .btn {
+        justify-content: center;
+    }
+}

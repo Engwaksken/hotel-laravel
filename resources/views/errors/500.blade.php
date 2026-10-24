@@ -1,0 +1,5 @@
+@extends('errors.layout')
+@section('code','500')
+@section('title','Something Went Wrong')
+@section('icon','fa-triangle-exclamation')
+@section('message','The hotel system could not complete this request. The error has been logged. Please try again, or contact the system administrator if it continues.')

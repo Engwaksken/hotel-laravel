@@ -1,0 +1,3 @@
+<?php
+namespace App\Http\Controllers\Accounting;use App\Http\Controllers\Controller;use App\Models\{HotelBusinessDate,NightAudit};use App\Services\Accounting\NightAuditService;
+class NightAuditController extends Controller{public function index(NightAuditService $svc){$p=auth()->user()->property_id;return view('accounting.night-audit',['businessDate'=>$svc->currentDate($p),'audits'=>NightAudit::where('property_id',$p)->latest('business_date')->paginate(20)]);}public function run(NightAuditService $svc){$svc->run(auth()->user()->property_id,auth()->id());return back()->with('success','Night audit completed and the next business date opened.');}}

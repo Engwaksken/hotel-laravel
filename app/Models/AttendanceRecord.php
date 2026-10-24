@@ -1,0 +1,2 @@
+<?php
+namespace App\Models;use Illuminate\Database\Eloquent\Model;class AttendanceRecord extends Model{protected $guarded=[];protected function casts():array{return['attendance_date'=>'date','clock_in'=>'datetime','clock_out'=>'datetime','hours_worked'=>'decimal:2','overtime_hours'=>'decimal:2'];}public function employee(){return $this->belongsTo(Employee::class);}public function property(){return $this->belongsTo(Property::class);}}

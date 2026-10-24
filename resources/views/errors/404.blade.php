@@ -1,0 +1,5 @@
+@extends('errors.layout')
+@section('code','404')
+@section('title','Page Not Found')
+@section('icon','fa-map-location-dot')
+@section('message','The page or hotel record you requested could not be found. It may have been moved, removed, or may belong to another hotel branch.')

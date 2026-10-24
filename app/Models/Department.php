@@ -1,0 +1,2 @@
+<?php
+namespace App\Models;use Illuminate\Database\Eloquent\Model;class Department extends Model{protected $guarded=[];protected function casts():array{return['is_active'=>'boolean'];}public function property(){return $this->belongsTo(Property::class);}public function employees(){return $this->hasMany(Employee::class);}public function positions(){return $this->hasMany(JobPosition::class);}}

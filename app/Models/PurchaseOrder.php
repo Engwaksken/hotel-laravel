@@ -1,0 +1,3 @@
+<?php
+namespace App\Models; use Illuminate\Database\Eloquent\Model;
+class PurchaseOrder extends Model{protected $fillable=['property_id','supplier_id','purchase_requisition_id','store_id','number','order_date','expected_date','status','subtotal','tax_amount','discount_amount','total_amount','notes','created_by','approved_by','approved_at']; protected $casts=['order_date'=>'date','expected_date'=>'date','approved_at'=>'datetime']; public function items(){return $this->hasMany(PurchaseOrderItem::class);} public function supplier(){return $this->belongsTo(Supplier::class);} public function store(){return $this->belongsTo(Store::class);}}

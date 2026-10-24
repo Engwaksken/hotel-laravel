@@ -1,0 +1,112 @@
+<?php
+
+public function updateRoom(Request $request, int $id): JsonResponse
+{
+    $this->authoriseMobileRoomWrite($request);
+
+    $table = $this->requireTable(['rooms'], 'Rooms');
+
+    $room = $this->scopedQuery($table, $this->propertyId($request))
+        ->where('id', $id)
+        ->first();
+
+    abort_if(! $room, 404, 'Room not found.');
+
+    $allowed = [
+        'room_number', 'number', 'name', 'building', 'floor',
+        'status', 'housekeeping_status', 'is_active', 'notes',
+    ];
+
+    $payload = [];
+
+    foreach ($allowed as $column) {
+        if (Schema::hasColumn($table, $column) && $request->exists($column)) {
+            $payload[$column] = $request->input($column);
+        }
+    }
+
+    if (Schema::hasColumn($table, 'updated_at')) {
+        $payload['updated_at'] = now();
+    }
+
+    if ($payload !== []) {
+        DB::table($table)->where('id', $id)->update($payload);
+    }
+
+    $fresh = $this->scopedQuery($table, $this->propertyId($request))
+        ->where('id', $id)
+        ->first();
+
+    return response()->json([
+        'message' => 'Room updated successfully.',
+        'data' => $this->normaliseRoom((array) $fresh),
+    ]);
+}
+
+public function deleteRoom(Request $request, int $id): JsonResponse
+{
+    $this->authoriseMobileRoomWrite($request);
+
+    $table = $this->requireTable(['rooms'], 'Rooms');
+
+    $room = $this->scopedQuery($table, $this->propertyId($request))
+        ->where('id', $id)
+        ->first();
+
+    abort_if(! $room, 404, 'Room not found.');
+
+    foreach (['reservations','bookings','housekeeping_tasks','maintenance_requests'] as $relatedTable) {
+        if (! Schema::hasTable($relatedTable) || ! Schema::hasColumn($relatedTable, 'room_id')) {
+            continue;
+        }
+
+        $related = DB::table($relatedTable)->where('room_id', $id);
+
+        if (Schema::hasColumn($relatedTable, 'deleted_at')) {
+            $related->whereNull('deleted_at');
+        }
+
+        if (Schema::hasColumn($relatedTable, 'status')) {
+            $related->whereNotIn(DB::raw('LOWER(status)'), [
+                'cancelled','canceled','completed','closed','checked_out','resolved',
+            ]);
+        }
+
+        if ($related->exists()) {
+            return response()->json([
+                'message' => 'This room cannot be deleted because it has active hotel records.',
+            ], 422);
+        }
+    }
+
+    if (Schema::hasColumn($table, 'deleted_at')) {
+        $data = ['deleted_at' => now()];
+        if (Schema::hasColumn($table, 'updated_at')) {
+            $data['updated_at'] = now();
+        }
+        DB::table($table)->where('id', $id)->update($data);
+    } else {
+        DB::table($table)->where('id', $id)->delete();
+    }
+
+    return response()->json([
+        'message' => 'Room deleted successfully.',
+    ]);
+}
+
+private function authoriseMobileRoomWrite(Request $request): void
+{
+    $allowedRoles = [
+        'super_admin',
+        'admin',
+        'hotel_owner',
+        'general_manager',
+        'branch_manager',
+    ];
+
+    abort_unless(
+        in_array(strtolower((string) $request->user()->role), $allowedRoles, true),
+        403,
+        'You do not have permission to edit or delete rooms.'
+    );
+}

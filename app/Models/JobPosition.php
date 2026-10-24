@@ -1,0 +1,2 @@
+<?php
+namespace App\Models;use Illuminate\Database\Eloquent\Model;class JobPosition extends Model{protected $guarded=[];protected function casts():array{return['default_salary'=>'decimal:2','is_active'=>'boolean'];}public function department(){return $this->belongsTo(Department::class);}public function property(){return $this->belongsTo(Property::class);}}

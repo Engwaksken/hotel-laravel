@@ -1,0 +1,5 @@
+@extends('errors.layout')
+@section('code','503')
+@section('title','Temporarily Unavailable')
+@section('icon','fa-screwdriver-wrench')
+@section('message','The hotel system is temporarily unavailable, usually because of maintenance or an update. Please try again shortly.')

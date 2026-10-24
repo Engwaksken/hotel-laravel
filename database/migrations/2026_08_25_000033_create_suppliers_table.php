@@ -1,0 +1,3 @@
+<?php
+use Illuminate\Database\Migrations\Migration;use Illuminate\Database\Schema\Blueprint;use Illuminate\Support\Facades\Schema;
+return new class extends Migration{public function up():void{Schema::create('suppliers',function(Blueprint $t){$t->id();$t->foreignId('property_id')->constrained()->cascadeOnDelete();$t->string('name');$t->string('contact_person')->nullable();$t->string('phone',40)->nullable();$t->string('email')->nullable();$t->string('tin',50)->nullable();$t->text('address')->nullable();$t->string('bank_name')->nullable();$t->string('bank_account')->nullable();$t->integer('credit_days')->default(0);$t->boolean('is_active')->default(true);$t->timestamps();$t->index(['property_id','name']);});}public function down():void{Schema::dropIfExists('suppliers');}};

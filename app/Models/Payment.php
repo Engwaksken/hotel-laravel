@@ -1,0 +1,3 @@
+<?php
+namespace App\Models; use App\Enums\PaymentStatus; use Illuminate\Database\Eloquent\Model;
+class Payment extends Model { protected $guarded=[]; protected function casts():array{return ['status'=>PaymentStatus::class,'amount'=>'decimal:2','paid_at'=>'datetime'];} public function folio(){return $this->belongsTo(Folio::class);} public function transactions(){return $this->hasMany(PaymentTransaction::class);} public function posOrder(){return $this->belongsTo(PosOrder::class);}  public function journalEntry(){return $this->belongsTo(JournalEntry::class);} }

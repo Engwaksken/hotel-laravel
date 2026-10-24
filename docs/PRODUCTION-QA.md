@@ -1,0 +1,22 @@
+# Production QA checklist
+
+- Run all migrations on a staging clone and confirm rollback strategy.
+- Run `php artisan test` in the complete Laravel application.
+- Confirm property isolation with two test properties and users.
+- Verify room overlap prevention across web, API and mobile booking paths.
+- Test check-in → folio → POS room charge → payment → checkout → housekeeping.
+- Test GRN → store transfer → POS recipe consumption → stock count variance.
+- Test supplier invoice/payment and verify balanced journals.
+- Test payroll approval/payment and verify balanced journals.
+- Test corporate credit limit/LPO enforcement and partial receipts.
+- Test all configured payment gateways in sandbox and verify callback idempotency.
+- Confirm card details are never persisted by the HMS.
+- Run night audit across midnight and verify business-date rollover.
+- Run a full backup, confirm `successful`, checksum and `verified_at`, then perform a restore drill on staging.
+- Confirm failed queue jobs surface in System Health.
+- Confirm secret system settings are masked in the UI.
+- Confirm role permissions and per-user denies are honoured.
+- Load-test reservation availability, POS checkout and dashboard queries.
+- Confirm HTTPS, secure cookies, trusted proxies, production logging and error reporting.
+- Configure Firebase/APNs and test Android/iOS push token refresh.
+- Review retention/privacy rules for guest identity documents and sensitive CRM preferences.

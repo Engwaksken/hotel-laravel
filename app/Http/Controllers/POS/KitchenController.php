@@ -1,0 +1,4 @@
+<?php
+namespace App\Http\Controllers\POS;
+use App\Http\Controllers\Controller;use App\Models\{KitchenTicket,PosOrderItem};use App\Services\POS\PosService;use Illuminate\Http\Request;
+class KitchenController extends Controller{public function index(Request $r){$pid=$r->user()->property_id;$tickets=KitchenTicket::with(['outlet','order.table','order.items'=>fn($q)=>$q->whereNotIn('kitchen_status',['not_required','cancelled'])])->where('property_id',$pid)->whereNotIn('status',['served','cancelled'])->oldest()->get();return view('pos.kitchen',compact('tickets'));}public function status(Request $r,PosOrderItem $item,PosService $svc){abort_unless($item->order()->where('property_id',$r->user()->property_id)->exists(),404);$d=$r->validate(['status'=>'required|in:accepted,preparing,ready,served,cancelled']);$svc->setItemKitchenStatus($item,$d['status'],$r->user()->id);return back()->with('success','Kitchen status updated.');}}

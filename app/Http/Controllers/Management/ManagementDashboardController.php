@@ -1,0 +1,3 @@
+<?php
+namespace App\Http\Controllers\Management;use App\Http\Controllers\Controller;use App\Services\Management\AnalyticsService;use Carbon\Carbon;use Illuminate\Http\Request;
+class ManagementDashboardController extends Controller{public function __invoke(Request $r,AnalyticsService $a){$to=Carbon::parse($r->input('to',now()->toDateString()));$from=Carbon::parse($r->input('from',$to->copy()->subDays(29)->toDateString()));$u=$r->user();$multi=$u->role==='super_admin';$rows=$multi?$a->consolidated($from,$to):[['property'=>$u->property,'kpis'=>$a->propertyKpis($u->property_id,$from,$to)]];return view('management.dashboard',compact('rows','from','to','multi'));}}

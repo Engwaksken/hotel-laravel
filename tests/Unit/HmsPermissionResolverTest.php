@@ -1,0 +1,4 @@
+<?php
+namespace Tests\Unit;
+use App\Models\{HmsPermission,User};use App\Support\HmsPermissionResolver;use Illuminate\Foundation\Testing\RefreshDatabase;use Illuminate\Support\Facades\DB;use Tests\TestCase;
+class HmsPermissionResolverTest extends TestCase{use RefreshDatabase;public function test_user_override_can_deny_role_permission():void{$u=User::factory()->create(['role'=>'general_manager','is_active'=>true]);$p=HmsPermission::create(['name'=>'management.view','label'=>'View management','module'=>'management']);DB::table('hms_role_permissions')->insert(['role'=>'general_manager','permission_id'=>$p->id,'created_at'=>now(),'updated_at'=>now()]);DB::table('hms_user_permissions')->insert(['user_id'=>$u->id,'permission_id'=>$p->id,'allowed'=>false,'created_at'=>now(),'updated_at'=>now()]);$this->assertFalse(app(HmsPermissionResolver::class)->allows($u,'management.view'));}}

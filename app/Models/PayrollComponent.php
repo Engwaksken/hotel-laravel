@@ -1,0 +1,2 @@
+<?php
+namespace App\Models;use Illuminate\Database\Eloquent\Model;class PayrollComponent extends Model{protected $guarded=[];protected function casts():array{return['default_value'=>'decimal:4','taxable'=>'boolean','statutory'=>'boolean','is_active'=>'boolean'];}public function property(){return $this->belongsTo(Property::class);}}

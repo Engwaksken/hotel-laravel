@@ -1,0 +1,4 @@
+<?php
+namespace App\Services\Payments;
+use App\Services\Payments\Contracts\PaymentGateway; use App\Services\Payments\Gateways\{AirtelMoneyGateway,FlutterwaveGateway,MtnMomoGateway,PesapalGateway}; use InvalidArgumentException;
+class PaymentManager { public function __construct(private array $gateways = []) {} public function register(string $name, PaymentGateway $gateway): self { $this->gateways[$name]=$gateway; return $this; } public function gateway(string $name): PaymentGateway {if(isset($this->gateways[$name]))return $this->gateways[$name];$this->gateways[$name]=match($name){'mtn_momo'=>app(MtnMomoGateway::class),'airtel_momo'=>app(AirtelMoneyGateway::class),'pesapal'=>app(PesapalGateway::class),'flutterwave','card'=>app(FlutterwaveGateway::class),default=>throw new InvalidArgumentException("Payment gateway [{$name}] is not registered.")};return $this->gateways[$name];} }

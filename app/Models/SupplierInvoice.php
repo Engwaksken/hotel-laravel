@@ -1,0 +1,3 @@
+<?php
+namespace App\Models; use Illuminate\Database\Eloquent\Model;
+class SupplierInvoice extends Model{protected $fillable=['property_id','supplier_id','purchase_order_id','goods_received_note_id','invoice_number','invoice_date','due_date','subtotal','tax_amount','total_amount','paid_amount','status','notes','created_by','journal_entry_id']; protected $casts=['invoice_date'=>'date','due_date'=>'date']; public function supplier(){return $this->belongsTo(Supplier::class);} public function payments(){return $this->hasMany(SupplierPayment::class);} public function journalEntry(){return $this->belongsTo(JournalEntry::class);} }

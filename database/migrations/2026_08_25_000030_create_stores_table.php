@@ -1,0 +1,3 @@
+<?php
+use Illuminate\Database\Migrations\Migration;use Illuminate\Database\Schema\Blueprint;use Illuminate\Support\Facades\Schema;
+return new class extends Migration{public function up():void{Schema::create('stores',function(Blueprint $t){$t->id();$t->foreignId('property_id')->constrained()->cascadeOnDelete();$t->string('name');$t->string('code',30);$t->enum('type',['main','kitchen','bar','housekeeping','maintenance','other'])->default('other');$t->string('location')->nullable();$t->foreignId('manager_id')->nullable()->constrained('users')->nullOnDelete();$t->boolean('is_active')->default(true);$t->timestamps();$t->unique(['property_id','code']);});}public function down():void{Schema::dropIfExists('stores');}};

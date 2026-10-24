@@ -1,0 +1,3 @@
+<?php
+use Illuminate\Database\Migrations\Migration;use Illuminate\Database\Schema\Blueprint;use Illuminate\Support\Facades\Schema;
+return new class extends Migration{public function up():void{Schema::table('properties',function(Blueprint $t){$t->string('logo_path')->nullable();$t->string('favicon_path')->nullable();$t->string('primary_color',20)->nullable();$t->string('secondary_color',20)->nullable();$t->string('website')->nullable();});}public function down():void{Schema::table('properties',function(Blueprint $t){$t->dropColumn(['logo_path','favicon_path','primary_color','secondary_color','website']);});}};

@@ -1,0 +1,3 @@
+<?php
+namespace App\Models; use Illuminate\Database\Eloquent\Model;
+class PosOrderItem extends Model{protected $guarded=[];protected function casts():array{return['quantity'=>'decimal:3','unit_price'=>'decimal:2','modifier_total'=>'decimal:2','tax_amount'=>'decimal:2','service_charge_amount'=>'decimal:2','discount_amount'=>'decimal:2','line_total'=>'decimal:2','stock_deducted_at'=>'datetime'];}public function order(){return $this->belongsTo(PosOrder::class,'pos_order_id');}public function menuItem(){return $this->belongsTo(MenuItem::class);}public function modifiers(){return $this->hasMany(PosOrderItemModifier::class);}}

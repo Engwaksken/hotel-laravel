@@ -1,0 +1,16 @@
+<?php
+namespace App\Services\Management;
+use App\Models\{Account,JournalLine,ManagementDailySnapshot,Property,Reservation,Room,Stay};use Carbon\Carbon;use Illuminate\Support\Facades\DB;
+class AnalyticsService{
+ public function propertyKpis(int $propertyId,Carbon $from,Carbon $to):array{
+  $rooms=Room::where('property_id',$propertyId)->count();$days=max(1,$from->diffInDays($to)+1);
+  $occupiedNights=0;$stays=Stay::where('property_id',$propertyId)->where('checked_in_at','<',$to->copy()->addDay()->startOfDay())->where(function($q)use($from){$q->whereNull('checked_out_at')->orWhere('checked_out_at','>',$from->copy()->startOfDay());})->get();foreach($stays as $stay){$start=Carbon::parse($stay->checked_in_at)->max($from->copy()->startOfDay());$end=Carbon::parse($stay->checked_out_at?:$stay->expected_check_out_at)->min($to->copy()->addDay()->startOfDay());if($end->gt($start))$occupiedNights+=max(1,(int)ceil($start->diffInHours($end)/24));}
+  $income=(float)DB::table('journal_lines as jl')->join('journal_entries as je','je.id','=','jl.journal_entry_id')->join('accounts as a','a.id','=','jl.account_id')->where('je.property_id',$propertyId)->whereBetween('je.entry_date',[$from->toDateString(),$to->toDateString()])->where('a.type','income')->selectRaw('COALESCE(SUM(jl.credit-jl.debit),0) v')->value('v');
+  $expense=(float)DB::table('journal_lines as jl')->join('journal_entries as je','je.id','=','jl.journal_entry_id')->join('accounts as a','a.id','=','jl.account_id')->where('je.property_id',$propertyId)->whereBetween('je.entry_date',[$from->toDateString(),$to->toDateString()])->where('a.type','expense')->selectRaw('COALESCE(SUM(jl.debit-jl.credit),0) v')->value('v');
+  $roomRevenue=(float)DB::table('journal_lines as jl')->join('journal_entries as je','je.id','=','jl.journal_entry_id')->join('accounts as a','a.id','=','jl.account_id')->where('je.property_id',$propertyId)->whereBetween('je.entry_date',[$from->toDateString(),$to->toDateString()])->where('a.subtype','room_revenue')->selectRaw('COALESCE(SUM(jl.credit-jl.debit),0) v')->value('v');
+  $availableNights=max(1,$rooms*$days);$occupancy=min(100,($occupiedNights/$availableNights)*100);$adr=$occupiedNights?($roomRevenue/$occupiedNights):0;$revpar=$availableNights?($roomRevenue/$availableNights):0;
+  return compact('rooms','days','occupiedNights','income','expense','roomRevenue','occupancy','adr','revpar')+['operatingResult'=>$income-$expense];
+ }
+ public function consolidated(Carbon $from,Carbon $to):array{return Property::where('is_active',1)->get()->map(fn($p)=>['property'=>$p,'kpis'=>$this->propertyKpis($p->id,$from,$to)])->all();}
+ public function snapshot(int $propertyId,Carbon $date):ManagementDailySnapshot{$k=$this->propertyKpis($propertyId,$date->copy()->startOfDay(),$date->copy()->endOfDay());return ManagementDailySnapshot::updateOrCreate(['property_id'=>$propertyId,'business_date'=>$date->toDateString()],['rooms_total'=>$k['rooms'],'rooms_occupied'=>$k['occupiedNights'],'occupancy_percent'=>$k['occupancy'],'adr'=>$k['adr'],'revpar'=>$k['revpar'],'room_revenue'=>$k['roomRevenue'],'fb_revenue'=>0,'other_revenue'=>max(0,$k['income']-$k['roomRevenue']),'total_revenue'=>$k['income'],'expenses'=>$k['expense'],'gross_operating_result'=>$k['operatingResult']]);}
+}

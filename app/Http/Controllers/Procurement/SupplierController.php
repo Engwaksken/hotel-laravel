@@ -1,0 +1,3 @@
+<?php
+namespace App\Http\Controllers\Procurement;use App\Http\Controllers\Controller;use App\Models\Supplier;use Illuminate\Http\Request;
+class SupplierController extends Controller{public function index(){return view('procurement.suppliers.index',['suppliers'=>Supplier::where('property_id',auth()->user()->property_id)->latest()->paginate(30)]);}public function store(Request $r){$d=$r->validate(['name'=>'required|max:255','contact_person'=>'nullable|max:255','phone'=>'nullable|max:40','email'=>'nullable|email','tin'=>'nullable|max:50','address'=>'nullable','credit_days'=>'nullable|integer|min:0']);$d['property_id']=auth()->user()->property_id;Supplier::create($d);return back()->with('success','Supplier added.');}}

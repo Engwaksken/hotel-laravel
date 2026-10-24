@@ -1,0 +1,12 @@
+[program:uganda-hms-worker]
+process_name=%(program_name)s_%(process_num)02d
+command=php /var/www/hms/artisan queue:work --queue=default,notifications,payments,backups --sleep=2 --tries=3 --timeout=900 --max-time=3600
+autostart=true
+autorestart=true
+stopasgroup=true
+killasgroup=true
+user=www-data
+numprocs=2
+redirect_stderr=true
+stdout_logfile=/var/www/hms/storage/logs/worker.log
+stopwaitsecs=950

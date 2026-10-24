@@ -1,0 +1,2 @@
+<?php
+namespace App\Models;use Illuminate\Database\Eloquent\Model;class LeaveType extends Model{protected $guarded=[];protected function casts():array{return['days_per_year'=>'decimal:2','is_paid'=>'boolean','requires_attachment'=>'boolean','is_active'=>'boolean'];}public function property(){return $this->belongsTo(Property::class);}}

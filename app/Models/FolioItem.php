@@ -1,0 +1,3 @@
+<?php
+namespace App\Models; use Illuminate\Database\Eloquent\Model;
+class FolioItem extends Model { protected $guarded=[]; protected function casts():array{return ['quantity'=>'decimal:3','unit_price'=>'decimal:2','tax_amount'=>'decimal:2','total'=>'decimal:2','posted_at'=>'datetime'];} public function folio(){return $this->belongsTo(Folio::class);} public function journalEntry(){return $this->belongsTo(JournalEntry::class);} }

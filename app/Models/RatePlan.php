@@ -1,0 +1,3 @@
+<?php
+namespace App\Models; use Illuminate\Database\Eloquent\Model;
+class RatePlan extends Model { protected $guarded=[]; protected function casts():array{return ['nightly_rate'=>'decimal:2','weekend_rate'=>'decimal:2','starts_on'=>'date','ends_on'=>'date','includes_breakfast'=>'boolean','is_active'=>'boolean','rules'=>'array'];} public function property(){return $this->belongsTo(Property::class);} public function roomType(){return $this->belongsTo(RoomType::class);} }

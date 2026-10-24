@@ -1,0 +1,5 @@
+@extends('errors.layout')
+@section('code','419')
+@section('title','Session Expired')
+@section('icon','fa-clock-rotate-left')
+@section('message','Your session or form token has expired. Please refresh the page or sign in again before retrying the action.')

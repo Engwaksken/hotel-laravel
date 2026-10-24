@@ -1,0 +1,4 @@
+<?php
+use Illuminate\Database\Migrations\Migration;use Illuminate\Database\Schema\Blueprint;use Illuminate\Support\Facades\Schema;
+return new class extends Migration{public function up():void{Schema::table('housekeeping_tasks',fn(Blueprint $t)=>$t->index(['property_id','status','due_at'],'hk_property_status_due'));Schema::table('maintenance_requests',fn(Blueprint $t)=>$t->index(['property_id','status','priority'],'maint_property_status_priority'));Schema::table('guest_service_requests',fn(Blueprint $t)=>$t->index(['property_id','status','requested_at'],'gsr_property_status_requested'));}
+public function down():void{Schema::table('housekeeping_tasks',fn(Blueprint $t)=>$t->dropIndex('hk_property_status_due'));Schema::table('maintenance_requests',fn(Blueprint $t)=>$t->dropIndex('maint_property_status_priority'));Schema::table('guest_service_requests',fn(Blueprint $t)=>$t->dropIndex('gsr_property_status_requested'));}};

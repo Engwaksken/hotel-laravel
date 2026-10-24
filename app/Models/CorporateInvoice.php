@@ -1,0 +1,3 @@
+<?php
+namespace App\Models; use Illuminate\Database\Eloquent\Model;
+class CorporateInvoice extends Model { protected $guarded=[]; protected function casts():array{return ['invoice_date'=>'date','due_date'=>'date','subtotal'=>'decimal:2','tax_total'=>'decimal:2','total'=>'decimal:2','paid_total'=>'decimal:2','balance'=>'decimal:2'];} public function items(){return $this->hasMany(CorporateInvoiceItem::class);} public function payments(){return $this->hasMany(CorporatePayment::class);} public function company(){return $this->belongsTo(CorporateAccount::class,'corporate_account_id');} public function agent(){return $this->belongsTo(TravelAgent::class,'travel_agent_id');} public function lpo(){return $this->belongsTo(LocalPurchaseOrder::class,'local_purchase_order_id');} }

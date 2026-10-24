@@ -1,0 +1,2 @@
+<?php
+namespace App\Models;use Illuminate\Database\Eloquent\Model;class LeaveRequest extends Model{protected $guarded=[];protected function casts():array{return['start_date'=>'date','end_date'=>'date','days'=>'decimal:2','approved_at'=>'datetime'];}public function employee(){return $this->belongsTo(Employee::class);}public function type(){return $this->belongsTo(LeaveType::class,'leave_type_id');}}

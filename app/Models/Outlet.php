@@ -1,0 +1,3 @@
+<?php
+namespace App\Models; use Illuminate\Database\Eloquent\Model;
+class Outlet extends Model{protected $guarded=[];protected function casts():array{return['uses_tables'=>'boolean','uses_kitchen'=>'boolean','is_active'=>'boolean'];}public function property(){return $this->belongsTo(Property::class);}public function store(){return $this->belongsTo(Store::class);}public function tables(){return $this->hasMany(RestaurantTable::class);}public function categories(){return $this->hasMany(MenuCategory::class);}public function menuItems(){return $this->hasMany(MenuItem::class);}public function orders(){return $this->hasMany(PosOrder::class);}}

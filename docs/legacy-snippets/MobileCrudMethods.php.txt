@@ -1,0 +1,228 @@
+<?php
+
+/*
+|--------------------------------------------------------------------------
+| MobileHotelController CRUD methods
+|--------------------------------------------------------------------------
+|
+| Copy these methods into App\Http\Controllers\Api\MobileHotelController.
+| They rely on the existing helper methods already in that controller:
+| propertyId(), requireTable(), scopedQuery().
+|
+*/
+
+public function updateRoom(Request $request, int $id): JsonResponse
+{
+    return $this->updateMobileRecord(
+        $request,
+        ['rooms'],
+        $id,
+        ['room_number', 'number', 'name', 'code', 'status', 'floor', 'notes', 'housekeeping_status']
+    );
+}
+
+public function deleteRoom(Request $request, int $id): JsonResponse
+{
+    return $this->deleteMobileRecord($request, ['rooms'], $id);
+}
+
+public function updateBooking(Request $request, int $id): JsonResponse
+{
+    return $this->updateMobileRecord(
+        $request,
+        ['reservations', 'bookings'],
+        $id,
+        [
+            'guest_name',
+            'status',
+            'check_in',
+            'check_out',
+            'check_in_date',
+            'check_out_date',
+            'arrival_date',
+            'departure_date',
+            'notes',
+            'special_requests',
+        ]
+    );
+}
+
+public function deleteBooking(Request $request, int $id): JsonResponse
+{
+    return $this->deleteMobileRecord($request, ['reservations', 'bookings'], $id);
+}
+
+public function updateGuest(Request $request, int $id): JsonResponse
+{
+    return $this->updateMobileRecord(
+        $request,
+        ['guests', 'customers'],
+        $id,
+        [
+            'full_name',
+            'name',
+            'first_name',
+            'last_name',
+            'email',
+            'phone',
+            'telephone',
+            'mobile',
+            'address',
+            'nationality',
+            'notes',
+        ]
+    );
+}
+
+public function deleteGuest(Request $request, int $id): JsonResponse
+{
+    return $this->deleteMobileRecord($request, ['guests', 'customers'], $id);
+}
+
+public function updatePosOrder(Request $request, int $id): JsonResponse
+{
+    return $this->updateMobileRecord(
+        $request,
+        ['pos_orders', 'restaurant_orders', 'orders'],
+        $id,
+        ['status', 'guest_name', 'customer_name', 'notes']
+    );
+}
+
+public function deletePosOrder(Request $request, int $id): JsonResponse
+{
+    return $this->deleteMobileRecord(
+        $request,
+        ['pos_orders', 'restaurant_orders', 'orders'],
+        $id
+    );
+}
+
+public function updateInventoryItem(Request $request, int $id): JsonResponse
+{
+    return $this->updateMobileRecord(
+        $request,
+        ['inventory_items', 'stock_items', 'items'],
+        $id,
+        [
+            'name',
+            'item_name',
+            'sku',
+            'code',
+            'category',
+            'unit',
+            'reorder_level',
+            'minimum_stock',
+            'notes',
+        ]
+    );
+}
+
+public function deleteInventoryItem(Request $request, int $id): JsonResponse
+{
+    return $this->deleteMobileRecord(
+        $request,
+        ['inventory_items', 'stock_items', 'items'],
+        $id
+    );
+}
+
+private function updateMobileRecord(
+    Request $request,
+    array $tables,
+    int $id,
+    array $allowedColumns
+): JsonResponse {
+    $this->authoriseMobileWrite($request);
+
+    $table = $this->requireTable($tables, 'Record');
+
+    $existing = $this->scopedQuery($table, $this->propertyId($request))
+        ->where('id', $id)
+        ->first();
+
+    abort_if(! $existing, 404, 'Record not found.');
+
+    $payload = [];
+
+    foreach ($allowedColumns as $column) {
+        if (
+            Schema::hasColumn($table, $column)
+            && $request->exists($column)
+        ) {
+            $payload[$column] = $request->input($column);
+        }
+    }
+
+    if (Schema::hasColumn($table, 'updated_at')) {
+        $payload['updated_at'] = now();
+    }
+
+    if ($payload !== []) {
+        DB::table($table)
+            ->where('id', $id)
+            ->update($payload);
+    }
+
+    $fresh = $this->scopedQuery($table, $this->propertyId($request))
+        ->where('id', $id)
+        ->first();
+
+    return response()->json([
+        'message' => 'Record updated successfully.',
+        'data' => (array) $fresh,
+    ]);
+}
+
+private function deleteMobileRecord(
+    Request $request,
+    array $tables,
+    int $id
+): JsonResponse {
+    $this->authoriseMobileWrite($request);
+
+    $table = $this->requireTable($tables, 'Record');
+
+    $existing = $this->scopedQuery($table, $this->propertyId($request))
+        ->where('id', $id)
+        ->first();
+
+    abort_if(! $existing, 404, 'Record not found.');
+
+    /*
+    | Prefer soft deletion when the table supports it.
+    */
+    if (Schema::hasColumn($table, 'deleted_at')) {
+        DB::table($table)
+            ->where('id', $id)
+            ->update([
+                'deleted_at' => now(),
+                'updated_at' => Schema::hasColumn($table, 'updated_at')
+                    ? now()
+                    : DB::raw('updated_at'),
+            ]);
+    } else {
+        DB::table($table)->where('id', $id)->delete();
+    }
+
+    return response()->json([
+        'message' => 'Record deleted successfully.',
+    ]);
+}
+
+private function authoriseMobileWrite(Request $request): void
+{
+    $allowed = [
+        'super_admin',
+        'admin',
+        'hotel_owner',
+        'general_manager',
+        'branch_manager',
+    ];
+
+    abort_unless(
+        in_array(strtolower((string) $request->user()->role), $allowed, true),
+        403,
+        'You do not have permission to edit or delete this record.'
+    );
+}

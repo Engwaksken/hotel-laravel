@@ -1,0 +1,3 @@
+<?php
+namespace App\Models;use Illuminate\Database\Eloquent\Model;
+class MinibarConsumption extends Model{protected $guarded=[];protected function casts():array{return['quantity'=>'decimal:3','unit_price'=>'decimal:2','total'=>'decimal:2','stock_posted'=>'boolean','folio_posted'=>'boolean','recorded_at'=>'datetime'];}public function roomItem(){return $this->belongsTo(MinibarRoomItem::class,'minibar_room_item_id');}public function room(){return $this->belongsTo(Room::class);}public function stay(){return $this->belongsTo(Stay::class);}public function folio(){return $this->belongsTo(Folio::class);}}

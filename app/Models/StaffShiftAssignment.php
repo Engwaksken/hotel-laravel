@@ -1,0 +1,2 @@
+<?php
+namespace App\Models;use Illuminate\Database\Eloquent\Model;class StaffShiftAssignment extends Model{protected $guarded=[];protected function casts():array{return['shift_date'=>'date'];}public function employee(){return $this->belongsTo(Employee::class);}public function shift(){return $this->belongsTo(StaffShift::class,'staff_shift_id');}}

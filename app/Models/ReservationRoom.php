@@ -1,0 +1,3 @@
+<?php
+namespace App\Models; use Illuminate\Database\Eloquent\Model;
+class ReservationRoom extends Model { protected $guarded=[]; protected function casts():array{return ['check_in_at'=>'datetime','check_out_at'=>'datetime','nightly_rate'=>'decimal:2'];} public function reservation(){return $this->belongsTo(Reservation::class);} public function room(){return $this->belongsTo(Room::class);} public function roomType(){return $this->belongsTo(RoomType::class);} }

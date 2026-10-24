@@ -1,0 +1,5 @@
+@extends('errors.layout')
+@section('code','403')
+@section('title','Access Denied')
+@section('icon','fa-shield-halved')
+@section('message','You do not have permission to access this page or perform this action. If you believe this is incorrect, contact an authorised hotel administrator.')

@@ -1,0 +1,3 @@
+<?php
+namespace App\Models; use Illuminate\Database\Eloquent\Model;
+class Folio extends Model { protected $guarded=[]; protected function casts():array{return ['charges_total'=>'decimal:2','payments_total'=>'decimal:2','balance'=>'decimal:2'];} public function property(){return $this->belongsTo(Property::class);} public function items(){return $this->hasMany(FolioItem::class);} public function payments(){return $this->hasMany(Payment::class);} public function guest(){return $this->belongsTo(Guest::class);} public function reservation(){return $this->belongsTo(Reservation::class);} public function stay(){return $this->belongsTo(Stay::class);} }

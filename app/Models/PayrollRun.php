@@ -1,0 +1,2 @@
+<?php
+namespace App\Models;use Illuminate\Database\Eloquent\Model;class PayrollRun extends Model{protected $guarded=[];protected function casts():array{return['period_start'=>'date','period_end'=>'date','pay_date'=>'date','gross_total'=>'decimal:2','deduction_total'=>'decimal:2','employer_cost_total'=>'decimal:2','net_total'=>'decimal:2'];}public function items(){return $this->hasMany(PayrollRunItem::class);}public function property(){return $this->belongsTo(Property::class);}public function journal(){return $this->belongsTo(JournalEntry::class,'journal_entry_id');}}

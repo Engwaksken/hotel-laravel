@@ -1,0 +1,3 @@
+<?php
+namespace App\Http\Controllers\Management;use App\Http\Controllers\Controller;use App\Models\{SecurityEvent,SystemAuditEvent};use Illuminate\Http\Request;
+class SecurityController extends Controller{public function index(Request $r){abort_unless($r->user()->isManager(),403);$pid=$r->user()->role==='super_admin'?null:$r->user()->property_id;$sec=SecurityEvent::when($pid,fn($q)=>$q->where('property_id',$pid))->latest('occurred_at')->limit(100)->get();$audit=SystemAuditEvent::when($pid,fn($q)=>$q->where('property_id',$pid))->latest('created_at')->limit(100)->get();return view('management.security',compact('sec','audit'));}}

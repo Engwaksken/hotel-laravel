@@ -1,0 +1,2 @@
+<?php
+namespace App\Models;use Illuminate\Database\Eloquent\Model;class RequestForQuotation extends Model{protected $fillable=['property_id','purchase_requisition_id','number','deadline_at','status','notes','created_by'];protected $casts=['deadline_at'=>'date'];public function suppliers(){return $this->belongsToMany(Supplier::class,'rfq_suppliers')->withPivot(['quoted_total','quotation_reference','quotation_date','is_awarded','notes'])->withTimestamps();}public function requisition(){return $this->belongsTo(PurchaseRequisition::class,'purchase_requisition_id');}}
