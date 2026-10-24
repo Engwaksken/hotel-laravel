@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Management;
 use App\Http\Controllers\Controller;
 use App\Models\{Account, ManagementBudget, ManagementBudgetLine};
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class BudgetController extends Controller
 {
@@ -19,9 +20,13 @@ class BudgetController extends Controller
         $pid = $this->propertyId($request);
 
         return view('management.budgets', [
-            'budgets' => ManagementBudget::where('property_id', $pid)->latest()->with('lines')->get(),
+            'budgets' => ManagementBudget::where('property_id', $pid)
+                ->latest()
+                ->with('lines.account')
+                ->get(),
             'accounts' => Account::where('property_id', $pid)
                 ->whereIn('type', ['income', 'expense'])
+                ->where('is_active', true)
                 ->orderBy('code')
                 ->get(),
         ]);
@@ -34,7 +39,11 @@ class BudgetController extends Controller
 
         $data = $request->validate([
             'name' => 'required|string|max:120',
-            'fiscal_year' => 'required|integer|min:2020|max:2100',
+            'fiscal_year' => [
+                'required', 'integer', 'min:2020', 'max:2100',
+                Rule::unique('management_budgets', 'fiscal_year')
+                    ->where(fn ($query) => $query->where('property_id', $pid)->where('name', $request->input('name'))),
+            ],
         ]);
 
         ManagementBudget::create($data + [
@@ -52,16 +61,20 @@ class BudgetController extends Controller
         abort_unless($request->user()->canManageBranch(), 403);
 
         $data = $request->validate([
-            'account_id' => 'required|integer',
+            'account_id' => [
+                'required',
+                'integer',
+                Rule::exists('accounts', 'id')->where(fn ($query) => $query
+                    ->where('property_id', $pid)
+                    ->where('is_active', true)
+                    ->whereIn('type', ['income', 'expense'])),
+            ],
             'month' => 'required|integer|min:1|max:12',
             'amount' => 'required|numeric|min:0',
+            'notes' => 'nullable|string|max:1000',
         ]);
 
-        abort_unless(
-            Account::where('property_id', $pid)->whereKey($data['account_id'])->exists(),
-            422,
-            'The selected account does not belong to your branch.'
-        );
+        abort_unless($budget->status === 'draft', 422, 'Approved budgets are locked.');
 
         ManagementBudgetLine::updateOrCreate(
             [
@@ -69,7 +82,7 @@ class BudgetController extends Controller
                 'account_id' => $data['account_id'],
                 'month' => $data['month'],
             ],
-            ['amount' => $data['amount']]
+            ['amount' => $data['amount'], 'notes' => $data['notes'] ?? null]
         );
 
         return back()->with('success', 'Budget line updated.');
@@ -80,6 +93,8 @@ class BudgetController extends Controller
         $pid = $this->propertyId($request);
         abort_unless((int) $budget->property_id === $pid, 404);
         abort_unless($request->user()->canManageBranch(), 403);
+        abort_unless($budget->status === 'draft', 422, 'This budget has already been approved.');
+        abort_if($budget->lines()->count() === 0, 422, 'Add at least one budget line before approving.');
 
         $budget->update([
             'status' => 'approved',

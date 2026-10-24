@@ -17,12 +17,19 @@
                 $value = old($field, $record->{$field} ?? '');
                 $label = ucwords(str_replace('_',' ',$field));
                 $isLong = in_array($field,['description','address','notes','requirements'],true);
-                $isBool = $field === 'is_active';
+                $isBool = in_array($field, ['is_active', 'nssf_eligible'], true);
                 $isDate = str_contains($field,'date') || in_array($field,['starts_at','ends_at','hire_date'],true);
                 $isNumber = preg_match('/(rate|amount|limit|salary|spend|discount|guests|days|occupancy|adults|children|value)/',$field);
             @endphp
             @if($isBool)
                 <label class="check span-2"><input type="hidden" name="{{ $field }}" value="0"><input type="checkbox" name="{{ $field }}" value="1" @checked((bool)$value)> {{ $label }}</label>
+            @elseif($field === 'tax_residency')
+                <label>{{ $label }}
+                    <select name="{{ $field }}">
+                        <option value="resident" @selected($value === 'resident')>Resident</option>
+                        <option value="non_resident" @selected($value === 'non_resident')>Non-resident</option>
+                    </select>
+                </label>
             @elseif($isLong)
                 <label class="span-2">{{ $label }}<textarea name="{{ $field }}">{{ $value }}</textarea></label>
             @else

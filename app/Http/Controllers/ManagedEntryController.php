@@ -35,7 +35,7 @@ class ManagedEntryController extends Controller
         'employees' => [
             'model' => Employee::class,
             'title' => 'Employee',
-            'fields' => ['first_name','other_names','last_name','phone','email','employment_type','hire_date','basic_salary','status'],
+            'fields' => ['first_name','other_names','last_name','phone','email','employment_type','hire_date','basic_salary','tax_residency','nssf_eligible','status'],
         ],
         'companies' => [
             'model' => CorporateAccount::class,
