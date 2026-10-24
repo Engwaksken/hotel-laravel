@@ -50,6 +50,10 @@ Route::get(
 Route::get('/hotel/{slug}', [HotelWebsiteController::class, 'home'])
     ->name('public.hotel.property');
 
+Route::get('/hotel/{slug}/availability', [HotelWebsiteController::class, 'availability'])
+    ->middleware('throttle:60,1')
+    ->name('public.booking.availability');
+
 Route::get('/hotel/{slug}/book', [HotelWebsiteController::class, 'booking'])
     ->name('public.booking');
 

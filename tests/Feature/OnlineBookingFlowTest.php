@@ -41,12 +41,45 @@ class OnlineBookingFlowTest extends TestCase
 
         $this->get(route('public.booking', $web->slug))
             ->assertOk()
-            ->assertSee('Book your stay');
+            ->assertSee('Book your stay')
+            ->assertSee('availability-feedback', false);
+
+        $checkIn = now()->addDays(10)->toDateString();
+        $checkOut = now()->addDays(11)->toDateString();
+        $availabilityRoute = route('public.booking.availability', [
+            'slug' => $web->slug,
+            'room_type_id' => $roomType->id,
+            'check_in' => $checkIn,
+            'check_out' => $checkOut,
+        ]);
+
+        $this->getJson($availabilityRoute)
+            ->assertOk()
+            ->assertJsonPath('available', true)
+            ->assertJsonPath('available_rooms', 1);
+
+        $capacityErrorResponse = $this->followingRedirects()
+            ->from(route('public.booking', $web->slug))
+            ->post(route('public.booking.store', $web->slug), [
+                'room_type_id' => $roomType->id,
+                'check_in' => $checkIn,
+                'check_out' => $checkOut,
+                'adults' => 3,
+                'children' => 0,
+                'first_name' => 'Online',
+                'email' => 'too-many@example.test',
+                'phone' => '+256700000002',
+            ]);
+
+        $capacityErrorResponse
+            ->assertOk()
+            ->assertSee('The selected room type cannot accommodate that number of guests.')
+            ->assertSee('value="3"', false);
 
         $response = $this->post(route('public.booking.store', $web->slug), [
             'room_type_id' => $roomType->id,
-            'check_in' => now()->addDays(10)->toDateString(),
-            'check_out' => now()->addDays(11)->toDateString(),
+            'check_in' => $checkIn,
+            'check_out' => $checkOut,
             'adults' => 2,
             'children' => 1,
             'first_name' => 'Online',
@@ -66,6 +99,11 @@ class OnlineBookingFlowTest extends TestCase
         $this->assertStringContainsString($reservation->reference, $confirmationUrl);
         $this->get(route('public.booking.confirmation', ['another-hotel', $reservation->reference]))
             ->assertNotFound();
+
+        $this->getJson($availabilityRoute)
+            ->assertOk()
+            ->assertJsonPath('available', false)
+            ->assertJsonPath('available_rooms', 0);
     }
 
     public function test_public_booking_page_is_hidden_when_booking_is_disabled(): void
@@ -78,5 +116,11 @@ class OnlineBookingFlowTest extends TestCase
         ]);
 
         $this->get(route('public.booking', $web->slug))->assertNotFound();
+        $this->get(route('public.booking.availability', [
+            'slug' => $web->slug,
+            'room_type_id' => 1,
+            'check_in' => now()->addDay()->toDateString(),
+            'check_out' => now()->addDays(2)->toDateString(),
+        ]))->assertNotFound();
     }
 }
