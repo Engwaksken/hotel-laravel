@@ -1,1 +1,27 @@
-@extends('layouts.app') @section('page_title','Stores & Stock') @section('content')<div class="card"><form method="POST" action="{{ route('procurement.stores.store') }}" class="inline-form">@csrf<input name="name" placeholder="Store name" required><input name="code" placeholder="Code" required><select name="type">@foreach(['main','kitchen','bar','housekeeping','maintenance','other'] as $t)<option>{{ $t }}</option>@endforeach</select><input name="location" placeholder="Location"><button class="btn primary">Add Store</button></form></div><div class="tabs">@foreach($stores as $s)<a class="{{ $selected?->id===$s->id?'active':'' }}" href="?store_id={{ $s->id }}">{{ $s->name }} ({{ $s->stocks_count }})</a>@endforeach</div><div class="card"><h3>{{ $selected?->name ?? 'No store' }}</h3>@if($selected)<div class="table-wrap"><table><tr><th>SKU</th><th>Item</th><th>Unit</th><th>Quantity</th><th>Reorder</th></tr>@foreach($stocks as $s)<tr><td>{{ $s->item->sku }}</td><td>{{ $s->item->name }}</td><td>{{ $s->item->unit }}</td><td>{{ number_format($s->quantity,4) }}</td><td>{{ number_format($s->item->reorder_level,4) }}</td></tr>@endforeach</table></div>{{ $stocks->links() }}@endif</div>@endsection
+@extends('layouts.app')
+@section('page_title', 'Stores & Stock')
+@section('content')
+    <div class="page-head">
+        <div><h1>Stores &amp; Stock</h1><p>Branch stores and their current inventory levels.</p></div>
+        <button class="btn primary" type="button" data-modal="newStore">Add store</button>
+    </div>
+    <div class="tabs">
+        @foreach($stores as $store)<a class="{{ $selected?->id === $store->id ? 'active' : '' }}" href="?store_id={{ $store->id }}">{{ $store->name }} ({{ $store->stocks_count }})</a>@endforeach
+    </div>
+    <div class="card">
+        <h2>{{ $selected?->name ?? 'No store selected' }}</h2>
+        @if($selected)
+            <div class="table-wrap"><table><thead><tr><th>SKU</th><th>Item</th><th>Unit</th><th>Quantity</th><th>Reorder</th></tr></thead><tbody>
+                @forelse($stocks as $stock)<tr><td>{{ $stock->item->sku }}</td><td>{{ $stock->item->name }}</td><td>{{ $stock->item->unit }}</td><td>{{ number_format($stock->quantity, 4) }}</td><td>{{ number_format($stock->item->reorder_level, 4) }}</td></tr>
+                @empty<tr><td colspan="5" class="empty">No stock recorded in this store.</td></tr>@endforelse
+            </tbody></table></div>{{ $stocks->links() }}
+        @endif
+    </div>
+    <div class="modal" id="newStore"><div class="modal-box"><button class="modal-close" type="button" aria-label="Close">&times;</button><h2>Add store</h2>
+        <form method="POST" action="{{ route('procurement.stores.store') }}" class="form-grid">@csrf
+            <label>Store name<input name="name" required></label><label>Code<input name="code" required></label>
+            <label>Type<select name="type">@foreach(['main','kitchen','bar','housekeeping','maintenance','other'] as $type)<option value="{{ $type }}">{{ ucfirst($type) }}</option>@endforeach</select></label>
+            <label>Location<input name="location"></label><div class="actions"><button class="btn primary">Add store</button></div>
+        </form>
+    </div></div>
+@endsection
