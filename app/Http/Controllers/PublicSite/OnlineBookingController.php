@@ -7,6 +7,7 @@ use App\Models\PropertyWebSetting;
 use App\Models\Reservation;
 use App\Services\Guest\OnlineBookingService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
 
 class OnlineBookingController extends Controller
 {
@@ -53,7 +54,18 @@ class OnlineBookingController extends Controller
         abort_unless($reservation->property_id === $web->property_id, 404);
 
         $reservation->load('guest', 'rooms.roomType');
+        $paid = (float) $reservation->payments()
+            ->where('status', 'successful')
+            ->sum('amount');
+        $depositDue = max(0, round((float) $reservation->deposit_required - $paid, 2));
+        $paymentUrl = $depositDue >= 1
+            ? URL::temporarySignedRoute(
+                'public.booking.payment',
+                now()->addHours(24),
+                ['slug' => $slug, 'reservation' => $reservation->reference],
+            )
+            : null;
 
-        return view('public.confirmation', compact('web', 'reservation'));
+        return view('public.confirmation', compact('web', 'reservation', 'depositDue', 'paymentUrl'));
     }
 }

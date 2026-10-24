@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\PublicSite;
 
 use App\Http\Controllers\Controller;
+use App\Models\PropertyWebSetting;
 use App\Support\SystemSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -43,8 +44,24 @@ class ClientLandingController extends Controller
 
         abort_if(! $service, 404);
 
+        $bookingUrl = null;
+        if (str_contains(strtolower($service->slug.' '.$service->name), 'room')) {
+            $propertyId = $service->property_id ?: $this->property()?->id;
+            $web = $propertyId
+                ? PropertyWebSetting::query()
+                    ->where('property_id', $propertyId)
+                    ->where('online_booking_enabled', true)
+                    ->first()
+                : null;
+
+            if ($web) {
+                $bookingUrl = route('public.booking', $web->slug);
+            }
+        }
+
         return view('public-site.service', [
             'service' => $service,
+            'bookingUrl' => $bookingUrl,
             'property' => $this->property(),
             'settings' => $this->settings(),
         ]);

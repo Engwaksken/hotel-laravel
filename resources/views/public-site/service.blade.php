@@ -4,13 +4,14 @@
 
 @section('content')
 @php
-    $enquiryUrl = filled($service->button_url)
-        ? $service->button_url
-        : (filled($settings['support_email'] ?? null)
-            ? 'mailto:'.$settings['support_email'].'?subject='.rawurlencode('Enquiry about '.$service->name)
-            : (filled($settings['support_phone'] ?? null)
-                ? 'tel:'.$settings['support_phone']
-                : '#contact'));
+    $enquiryUrl = $bookingUrl
+        ?: (filled($service->button_url)
+            ? $service->button_url
+            : (filled($settings['support_email'] ?? null)
+                ? 'mailto:'.$settings['support_email'].'?subject='.rawurlencode('Enquiry about '.$service->name)
+                : (filled($settings['support_phone'] ?? null)
+                    ? 'tel:'.$settings['support_phone']
+                    : '#contact')));
 @endphp
 
 <section class="service-detail">
@@ -34,7 +35,7 @@
         @endif
 
         <a href="{{ $enquiryUrl }}" class="site-book-btn">
-            {{ $service->button_text ?: 'Book / Enquire' }}
+            {{ $service->button_text ?: ($bookingUrl ? 'Book this room' : 'Book / Enquire') }}
         </a>
     </div>
 </section>

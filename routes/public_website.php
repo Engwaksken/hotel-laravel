@@ -8,6 +8,7 @@ use App\Http\Controllers\PublicSite\ClientLandingController;
 use App\Http\Controllers\PublicSite\GuestFeatureController;
 use App\Http\Controllers\PublicSite\HotelWebsiteController;
 use App\Http\Controllers\PublicSite\OnlineBookingController;
+use App\Http\Controllers\PublicSite\PublicBookingPaymentController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -63,6 +64,14 @@ Route::post('/hotel/{slug}/book', [OnlineBookingController::class, 'store'])
 
 Route::get('/hotel/{slug}/booking-confirmation/{reservation:reference}', [OnlineBookingController::class, 'confirmation'])
     ->name('public.booking.confirmation');
+
+Route::get('/hotel/{slug}/booking-confirmation/{reservation:reference}/payment', [PublicBookingPaymentController::class, 'show'])
+    ->middleware(['signed', 'throttle:30,1'])
+    ->name('public.booking.payment');
+
+Route::post('/hotel/{slug}/booking-confirmation/{reservation:reference}/payment', [PublicBookingPaymentController::class, 'initiate'])
+    ->middleware(['signed', 'throttle:10,1'])
+    ->name('public.booking.payment.initiate');
 
 /*
 |--------------------------------------------------------------------------

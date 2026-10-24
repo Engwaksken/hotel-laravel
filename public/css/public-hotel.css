@@ -169,6 +169,43 @@ button:disabled {
     text-align: center;
 }
 
+.payment-card {
+    max-width: 680px;
+    margin: 40px auto;
+}
+
+.payment-card h1 {
+    margin-top: 0;
+}
+
+.payment-card form {
+    display: grid;
+    gap: 8px;
+}
+
+.payment-card label {
+    margin: 8px 0 0;
+}
+
+.payment-card label small,
+.payment-note {
+    color: #667;
+    font-weight: 400;
+}
+
+.payment-amount {
+    padding: 14px;
+    border-radius: 10px;
+    background: #edf7f4;
+    color: #075e54;
+    font-size: 1.1rem;
+}
+
+.payment-success {
+    color: #116b3a;
+    font-weight: 700;
+}
+
 footer {
     padding: 30px;
     background: #132522;

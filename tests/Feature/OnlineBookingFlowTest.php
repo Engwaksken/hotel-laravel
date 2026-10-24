@@ -7,8 +7,11 @@ use App\Models\PropertyWebSetting;
 use App\Models\Room;
 use App\Models\RoomType;
 use App\Enums\RoomStatus;
+use App\Services\Payments\Contracts\PaymentGateway;
+use App\Services\Payments\PaymentManager;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\URL;
 use Tests\TestCase;
 
 class OnlineBookingFlowTest extends TestCase
@@ -33,6 +36,15 @@ class OnlineBookingFlowTest extends TestCase
             'max_children' => 1,
             'is_active' => true,
         ]);
+        DB::table('hotel_services')->insert([
+            'property_id' => $property->id,
+            'name' => 'Rooms',
+            'slug' => 'room',
+            'is_active' => true,
+            'show_on_homepage' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
         Room::create([
             'property_id' => $property->id,
             'room_type_id' => $roomType->id,
@@ -48,6 +60,11 @@ class OnlineBookingFlowTest extends TestCase
                 'slug' => $web->slug,
                 'room_type_id' => $roomType->id,
             ]), false);
+
+        $this->get(route('public.services.show', 'room'))
+            ->assertOk()
+            ->assertSee(route('public.booking', $web->slug), false)
+            ->assertSee('Book this room');
 
         $this->get(route('public.booking', $web->slug))
             ->assertOk()
@@ -114,10 +131,42 @@ class OnlineBookingFlowTest extends TestCase
         $this->assertStringContainsString('/booking-confirmation/', $confirmationUrl);
 
         $confirmation = $this->get($confirmationUrl);
-        $confirmation->assertOk()->assertSee('Booking confirmed');
+        $confirmation->assertOk()
+            ->assertSee('Booking confirmed')
+            ->assertSee('Proceed to payment');
 
         $reservation = \App\Models\Reservation::query()->firstOrFail();
         $this->assertStringContainsString($reservation->reference, $confirmationUrl);
+
+        $paymentUrl = URL::temporarySignedRoute(
+            'public.booking.payment',
+            now()->addHour(),
+            ['slug' => $web->slug, 'reservation' => $reservation->reference],
+        );
+        $this->get($paymentUrl)
+            ->assertOk()
+            ->assertSee('Pay your booking deposit')
+            ->assertSee('UGX 30');
+
+        $initiateUrl = URL::temporarySignedRoute(
+            'public.booking.payment.initiate',
+            now()->addHour(),
+            ['slug' => $web->slug, 'reservation' => $reservation->reference],
+        );
+        $manager = new PaymentManager();
+        $manager->register('pesapal', new FakePaymentGateway());
+        $this->app->instance(PaymentManager::class, $manager);
+
+        $this->post($initiateUrl, ['method' => 'pesapal'])
+            ->assertRedirect('https://checkout.example.test/pay');
+
+        $this->assertDatabaseHas('payments', [
+            'reservation_id' => $reservation->id,
+            'method' => 'pesapal',
+            'status' => 'processing',
+            'amount' => 30,
+        ]);
+
         $this->get(route('public.booking.confirmation', ['another-hotel', $reservation->reference]))
             ->assertNotFound();
 
@@ -143,5 +192,27 @@ class OnlineBookingFlowTest extends TestCase
             'check_in' => now()->addDay()->toDateString(),
             'check_out' => now()->addDays(2)->toDateString(),
         ]))->assertNotFound();
+    }
+}
+
+class FakePaymentGateway implements PaymentGateway
+{
+    public function initiate(array $payload): array
+    {
+        return [
+            'mode' => 'redirect',
+            'redirect_url' => 'https://checkout.example.test/pay',
+            'gateway_reference' => 'test-gateway-reference',
+        ];
+    }
+
+    public function verify(string $reference): array
+    {
+        return ['successful' => false, 'status' => 'pending'];
+    }
+
+    public function refund(string $reference, float $amount): array
+    {
+        return ['status' => 'pending'];
     }
 }
