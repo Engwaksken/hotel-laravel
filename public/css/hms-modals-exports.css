@@ -2,6 +2,13 @@
    HMS GLOBAL MODALS + EXPORT TOOLBAR
 ========================================================= */
 
+/* Keep modal backdrops and dialogs above the sticky application topbar/sidebar. */
+.modal,
+.hms-modal,
+.hms-crud-modal {
+    z-index: 2000;
+}
+
 .hms-export-actions {
     display: inline-flex;
     align-items: center;
