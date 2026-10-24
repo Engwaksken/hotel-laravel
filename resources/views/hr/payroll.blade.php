@@ -57,7 +57,12 @@
                                 {{ $component->calculation === 'percentage' ? number_format((float) $component->default_value, 4).'%' : 'UGX '.number_format((float) $component->default_value, 2) }}
                             @endif
                         </td>
-                        <td>{{ $component->taxable ? 'Taxable' : 'Not taxable' }}@if($component->statutory) · Statutory@endif</td>
+                        <td>
+                            {{ $component->taxable ? 'Taxable' : 'Not taxable' }}
+                            @if($component->statutory)
+                                · Statutory
+                            @endif
+                        </td>
                     </tr>
                 @empty
                     <tr><td colspan="5" class="empty">Payroll components have not been seeded for this property. Run the HR seeder.</td></tr>

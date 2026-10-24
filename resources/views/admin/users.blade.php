@@ -9,15 +9,20 @@
         <h1>Branch users</h1>
         <p>Manage staff access for {{ $property->name ?? 'this hotel branch' }}.</p>
     </div>
+    <button class="btn primary" type="button" data-modal="createUserModal"><i class="fas fa-user-plus"></i> Create user</button>
 </div>
 
-<div class="card">
+<div class="modal {{ $errors->any() ? 'open' : '' }}" id="createUserModal"><div class="modal-box"><button class="modal-close" type="button" aria-label="Close">&times;</button>
     <div class="card-head">
         <h2><i class="fas fa-user-plus"></i> Create user</h2>
         @if(auth()->user()->isBranchManager())
             <span class="badge info"><i class="fas fa-building"></i> Branch Manager access</span>
         @endif
     </div>
+
+    @if($errors->any())
+        <div class="alert error" role="alert">{{ $errors->first() }}</div>
+    @endif
 
     <form method="POST" action="{{ route('admin.users.store') }}" class="form-grid">
         @csrf
@@ -71,7 +76,7 @@
             Branch Managers can create operational staff for their assigned branch, but cannot create or promote Super Admins, Hotel Owners, General Managers or other Branch Managers.
         </div>
     @endif
-</div>
+</div></div>
 
 <div class="card">
     <div class="card-head">
