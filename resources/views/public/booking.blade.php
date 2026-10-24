@@ -73,7 +73,7 @@
                         @foreach ($types as $type)
                             <option
                                 value="{{ $type->id }}"
-                                @selected((string) old('room_type_id') === (string) $type->id)
+                                @selected((string) old('room_type_id', request('room_type_id')) === (string) $type->id)
                             >
                                 {{ $type->name }} — UGX {{ number_format((float) $type->base_rate) }}/night
                             </option>

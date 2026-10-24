@@ -6,7 +6,9 @@ use App\Models\Property;
 use App\Models\PropertyWebSetting;
 use App\Models\Room;
 use App\Models\RoomType;
+use App\Enums\RoomStatus;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class OnlineBookingFlowTest extends TestCase
@@ -39,10 +41,29 @@ class OnlineBookingFlowTest extends TestCase
             'is_active' => true,
         ]);
 
+        $this->get(route('public.hotel.property', $web->slug))
+            ->assertOk()
+            ->assertSee('Book this room')
+            ->assertSee(route('public.booking', [
+                'slug' => $web->slug,
+                'room_type_id' => $roomType->id,
+            ]), false);
+
         $this->get(route('public.booking', $web->slug))
             ->assertOk()
             ->assertSee('Book your stay')
             ->assertSee('availability-feedback', false);
+
+        $this->get(route('public.booking', [
+            'slug' => $web->slug,
+            'room_type_id' => $roomType->id,
+        ]))
+            ->assertOk()
+            ->assertSee('value="'.$roomType->id.'"', false)
+            ->assertSee('selected', false);
+
+        DB::table('rooms')->where('room_number', '101')->update(['status' => 'clean']);
+        $this->assertSame(RoomStatus::Available, Room::query()->where('room_number', '101')->firstOrFail()->status);
 
         $checkIn = now()->addDays(10)->toDateString();
         $checkOut = now()->addDays(11)->toDateString();

@@ -64,6 +64,39 @@
         href="{{ asset('css/hotel-public.css') }}?v={{ @filemtime(public_path('css/hotel-public.css')) ?: time() }}"
     >
 
+    <style>
+        .public-footer {
+            align-items: start;
+        }
+
+        .public-footer > div {
+            min-width: 0;
+        }
+
+        .public-footer > div > strong {
+            display: block;
+            margin-bottom: 12px;
+            color: #fff;
+        }
+
+        .public-footer p,
+        .public-footer a {
+            overflow-wrap: anywhere;
+            line-height: 1.6;
+        }
+
+        .public-footer a:hover {
+            color: #fff;
+        }
+
+        @media (max-width: 650px) {
+            .public-footer {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+    </style>
+
     <link
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
