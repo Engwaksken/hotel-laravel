@@ -38,6 +38,7 @@
             method="post"
             action="{{ route('public.booking.store', $web->slug) }}"
             data-availability-url="{{ route('public.booking.availability', $web->slug) }}"
+            data-initial-step="{{ $errors->hasAny(['check_in', 'check_out', 'room_type_id', 'adults', 'children']) ? 'stay' : ($errors->hasAny(['first_name', 'last_name', 'email', 'phone', 'nationality']) ? 'guest' : ($errors->any() ? 'extras' : 'stay')) }}"
         >
             @csrf
 
@@ -160,11 +161,134 @@
     const form = document.getElementById('online-booking-form');
     if (!form) return;
 
+    const originalGrid = form.querySelector('.form-grid');
+    const guestFields = Array.from(originalGrid.querySelectorAll(':scope > label')).slice(5);
+    const tabDefinitions = [
+        ['stay', '1. Stay'],
+        ['guest', '2. Guest details'],
+        ['extras', '3. Extras & review'],
+    ];
+    const tabs = document.createElement('div');
+    tabs.className = 'booking-tabs';
+    tabs.setAttribute('role', 'tablist');
+    tabs.setAttribute('aria-label', 'Booking steps');
+
+    const panels = {};
+    const tabButtons = {};
+    for (const [key, title] of tabDefinitions) {
+        const tab = document.createElement('button');
+        tab.type = 'button';
+        tab.className = 'booking-tab';
+        tab.id = `booking-tab-${key}`;
+        tab.textContent = title;
+        tab.setAttribute('role', 'tab');
+        tab.setAttribute('aria-controls', `booking-step-${key}`);
+        tab.setAttribute('aria-selected', 'false');
+        tabs.appendChild(tab);
+        tabButtons[key] = tab;
+
+        const panel = document.createElement('section');
+        panel.className = 'booking-step';
+        panel.id = `booking-step-${key}`;
+        panel.setAttribute('role', 'tabpanel');
+        panel.setAttribute('aria-labelledby', tab.id);
+        panel.hidden = true;
+        panels[key] = panel;
+    }
+
+    const stayTitle = document.createElement('h2');
+    stayTitle.textContent = 'Choose your stay';
+    panels.stay.append(stayTitle, originalGrid);
+    const guestGrid = document.createElement('div');
+    guestGrid.className = 'form-grid';
+    guestFields.forEach((field) => guestGrid.appendChild(field));
+    const guestTitle = document.createElement('h2');
+    guestTitle.textContent = 'Guest details';
+    panels.guest.append(guestTitle, guestGrid);
+
+    const availability = document.getElementById('availability-feedback');
+    if (availability) panels.stay.appendChild(availability);
+
+    const extrasTitle = form.querySelector('h2');
+    if (extrasTitle) {
+        extrasTitle.textContent = 'Optional extras';
+        panels.extras.appendChild(extrasTitle);
+    }
+    const addonsGrid = form.querySelector('.grid');
+    if (addonsGrid) panels.extras.appendChild(addonsGrid);
+    const specialRequests = form.querySelector('[for="special-requests"]');
+    if (specialRequests) panels.extras.appendChild(specialRequests);
+    const depositNote = Array.from(form.children).find((element) =>
+        element.matches('p') && element.textContent.includes('Required deposit')
+    );
+    if (depositNote) panels.extras.appendChild(depositNote);
+    const submit = document.getElementById('confirm-booking');
+    if (submit) panels.extras.appendChild(submit);
+
+    const stayActions = document.createElement('div');
+    stayActions.className = 'booking-step-actions booking-step-actions-end';
+    stayActions.innerHTML = '<button type="button" class="btn" data-next="guest">Continue to guest details</button>';
+    panels.stay.appendChild(stayActions);
+
+    const guestActions = document.createElement('div');
+    guestActions.className = 'booking-step-actions';
+    guestActions.innerHTML = '<button type="button" class="btn btn-secondary" data-previous="stay">Back</button><button type="button" class="btn" data-next="extras">Continue to extras</button>';
+    panels.guest.appendChild(guestActions);
+
+    const extrasActions = document.createElement('div');
+    extrasActions.className = 'booking-step-actions';
+    extrasActions.innerHTML = '<button type="button" class="btn btn-secondary" data-previous="guest">Back</button>';
+    panels.extras.insertBefore(extrasActions, submit);
+
+    form.append(tabs, panels.stay, panels.guest, panels.extras);
+
+    function activateStep(key, focusTab = false) {
+        if (!panels[key]) return;
+        for (const [step] of tabDefinitions) {
+            const active = step === key;
+            panels[step].hidden = !active;
+            tabButtons[step].setAttribute('aria-selected', String(active));
+            tabButtons[step].tabIndex = active ? 0 : -1;
+        }
+        if (focusTab) tabButtons[key].focus();
+    }
+
+    function validatePanel(panel) {
+        const invalid = Array.from(panel.querySelectorAll(':invalid'))[0];
+        if (!invalid) return true;
+        invalid.reportValidity();
+        return false;
+    }
+
+    tabs.addEventListener('click', (event) => {
+        const button = event.target.closest('[role="tab"]');
+        if (button) activateStep(button.id.replace('booking-tab-', ''));
+    });
+
+    form.querySelectorAll('[data-next]').forEach((button) => {
+        button.addEventListener('click', () => {
+            const next = button.dataset.next;
+            const current = button.closest('.booking-step').id.replace('booking-step-', '');
+            if (validatePanel(panels[current])) {
+                activateStep(next);
+                tabButtons[next].focus();
+            }
+        });
+    });
+    form.querySelectorAll('[data-previous]').forEach((button) => {
+        button.addEventListener('click', () => {
+            activateStep(button.dataset.previous);
+            tabButtons[button.dataset.previous].focus();
+        });
+    });
+
+    form.noValidate = true;
+    activateStep(form.dataset.initialStep || 'stay');
+
     const checkIn = form.querySelector('[name="check_in"]');
     const checkOut = form.querySelector('[name="check_out"]');
     const roomType = form.querySelector('[name="room_type_id"]');
     const feedback = document.getElementById('availability-feedback');
-    const submit = document.getElementById('confirm-booking');
     let timer;
     let request;
 
@@ -243,6 +367,15 @@
     });
 
     form.addEventListener('submit', (event) => {
+        const invalid = Array.from(form.querySelectorAll(':invalid'))[0];
+        if (invalid) {
+            event.preventDefault();
+            const panel = invalid.closest('.booking-step');
+            if (panel) activateStep(panel.id.replace('booking-step-', ''));
+            window.setTimeout(() => invalid.reportValidity(), 0);
+            return;
+        }
+
         if (checkOut.value && checkIn.value && checkOut.value <= checkIn.value) {
             event.preventDefault();
             checkOut.focus();

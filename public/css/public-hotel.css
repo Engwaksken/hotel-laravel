@@ -206,6 +206,62 @@ button:disabled {
     font-weight: 700;
 }
 
+[hidden] {
+    display: none !important;
+}
+
+.booking-tabs {
+    display: flex;
+    gap: 8px;
+    margin: 24px 0 18px;
+    padding-bottom: 12px;
+    overflow-x: auto;
+    border-bottom: 1px solid #e3e8e8;
+}
+
+.booking-tab {
+    flex: 1 0 auto;
+    padding: 12px 16px;
+    border: 1px solid #d9e1df;
+    border-radius: 10px;
+    background: #fff;
+    color: #52615f;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.booking-tab[aria-selected="true"] {
+    border-color: #075e54;
+    background: #eaf5f2;
+    color: #075e54;
+}
+
+.booking-step {
+    padding: 8px 0;
+}
+
+.booking-step h2 {
+    margin: 0 0 14px;
+}
+
+.booking-step-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.booking-step-actions-end {
+    justify-content: flex-end;
+}
+
+.btn-secondary {
+    border: 1px solid #ccd2d7;
+    background: #fff;
+    color: #344;
+}
+
 footer {
     padding: 30px;
     background: #132522;
@@ -220,6 +276,15 @@ footer {
 
     .form-grid {
         grid-template-columns: 1fr;
+    }
+
+    .booking-tab {
+        padding: 10px 12px;
+        font-size: 14px;
+    }
+
+    .booking-step-actions .btn {
+        flex: 1;
     }
 
     .hero {
