@@ -120,6 +120,8 @@
         href="{{ asset('css/hms.css') }}?v={{ @filemtime(public_path('css/hms.css')) ?: time() }}"
     >
 
+    <link rel="stylesheet" href="{{ asset('css/responsive-overrides.css') }}?v={{ @filemtime(public_path('css/responsive-overrides.css')) ?: time() }}">
+
     @if(file_exists(public_path('css/hms-enhancements.css')))
         <link
             rel="stylesheet"

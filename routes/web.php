@@ -315,6 +315,12 @@ Route::middleware('auth')->group(function (): void {
         Route::get('/reports', [AccountingReportsController::class, 'index'])
             ->name('reports.index');
 
+        Route::get('/reports/csv', [AccountingReportsController::class, 'csv'])
+            ->name('reports.csv');
+
+        Route::get('/reports/pdf', [AccountingReportsController::class, 'pdf'])
+            ->name('reports.pdf');
+
         Route::get('/reconciliations', [ReconciliationController::class, 'index'])
             ->name('reconciliations.index');
 
