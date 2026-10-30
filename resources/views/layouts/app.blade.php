@@ -39,35 +39,8 @@
         $logoPath = \App\Support\SystemSetting::get('logo_path');
         $faviconPath = \App\Support\SystemSetting::get('favicon_path');
 
-        $brandingUrl = static function (?string $path): ?string {
-            if (! $path) {
-                return null;
-            }
-
-            $path = trim($path);
-
-            if (
-                str_starts_with($path, 'http://')
-                || str_starts_with($path, 'https://')
-            ) {
-                return $path;
-            }
-
-            $path = ltrim($path, '/');
-
-            if (str_starts_with($path, 'public/')) {
-                $path = substr($path, 7);
-            }
-
-            if (str_starts_with($path, 'storage/')) {
-                $path = substr($path, 8);
-            }
-
-            return asset('storage/'.$path);
-        };
-
-        $logoUrl = $brandingUrl($logoPath);
-        $faviconUrl = $brandingUrl($faviconPath);
+        $logoUrl = \App\Support\BrandingAsset::url($logoPath);
+        $faviconUrl = \App\Support\BrandingAsset::url($faviconPath);
 
         $user = auth()->user();
 
@@ -100,6 +73,8 @@
         <link
             rel="icon"
             href="{{ $faviconUrl }}"
+            type="{{ \App\Support\BrandingAsset::mimeType($faviconPath) }}"
+            sizes="any"
         >
     @endif
 

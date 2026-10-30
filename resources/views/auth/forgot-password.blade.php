@@ -52,8 +52,8 @@
             return asset('storage/'.$path);
         };
 
-        $logoUrl = $brandingUrl($logoPath);
-        $faviconUrl = $brandingUrl($faviconPath);
+        $logoUrl = \App\Support\BrandingAsset::url($logoPath);
+        $faviconUrl = \App\Support\BrandingAsset::url($faviconPath);
     @endphp
 
     <meta charset="utf-8">
@@ -63,7 +63,7 @@
     <title>Forgot Password · {{ $systemName }}</title>
 
     @if($faviconUrl)
-        <link rel="icon" href="{{ $faviconUrl }}">
+        <link rel="icon" href="{{ $faviconUrl }}" type="{{ \App\Support\BrandingAsset::mimeType($faviconPath) }}" sizes="any">
     @endif
 
     <link rel="preconnect" href="https://fonts.googleapis.com">

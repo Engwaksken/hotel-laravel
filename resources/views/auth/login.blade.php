@@ -41,18 +41,18 @@
             return asset('storage/'.$path);
         };
 
-        $logoUrl = $brandingUrl($logoPath);
-        $faviconUrl = $brandingUrl($faviconPath);
+        $logoUrl = \App\Support\BrandingAsset::url($logoPath);
+        $faviconUrl = \App\Support\BrandingAsset::url($faviconPath);
     @endphp
 
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>Sign In · {{ $systemName }}</title>
+    <title>Sign In ï¿½ {{ $systemName }}</title>
 
     @if($faviconUrl)
-        <link rel="icon" href="{{ $faviconUrl }}">
+        <link rel="icon" href="{{ $faviconUrl }}" type="{{ \App\Support\BrandingAsset::mimeType($faviconPath) }}" sizes="any">
     @endif
 
     <link rel="preconnect" href="https://fonts.googleapis.com">

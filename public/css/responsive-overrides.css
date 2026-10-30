@@ -23,6 +23,23 @@
 .tab-buttons .btn.active { background: var(--hms-primary, #0f766e); color: #fff; }
 .module-tabs .module-tab.active { box-shadow: inset 0 -2px 0 var(--hms-accent, #14b8a6); }
 .sidebar .brand-mark { background: var(--hms-accent, #14b8a6); color: #fff; }
+.sidebar {
+    height: 100vh;
+    height: 100dvh;
+    background: linear-gradient(
+        180deg,
+        var(--hms-secondary, #134e4a) 0%,
+        color-mix(in srgb, var(--hms-secondary, #134e4a) 72%, var(--hms-primary, #0f766e)) 100%
+    ) !important;
+    overscroll-behavior: contain;
+}
+.sidebar .nav-group-items a:hover,
+.sidebar .nav-group > summary:hover {
+    background: color-mix(in srgb, var(--hms-accent, #14b8a6) 20%, transparent);
+}
+.main-panel, .content, .topbar { max-width: 100%; }
+.content img, .content video, .content canvas, .content svg { max-width: 100%; }
+.content input, .content select, .content textarea { max-width: 100%; }
 .report-tab-panel[hidden], .minibar-tab-panel[hidden], .procurement-report-panel[hidden] { display: none !important; }
 .procurement-period-filter { align-items: end; }
 .procurement-period-filter label { margin: 0; }
@@ -35,6 +52,21 @@
     .report-filter .btn { width: 100%; }
     .procurement-period-filter > * { flex: 1 1 calc(50% - 8px); }
     .report-summary .card b { float: none; display: block; margin-top: 3px; }
+}
+
+@media (max-width: 1100px) {
+    .sidebar { width: min(300px, 88vw); }
+    .main-panel { width: 100%; margin-left: 0; }
+    .sidebar-backdrop.show { backdrop-filter: blur(2px); }
+}
+
+@media (max-width: 480px) {
+    .topbar { gap: 5px; }
+    .topbar-actions { min-width: 0; }
+    .page-head { align-items: stretch; }
+    .page-head .actions, .page-head .btn { max-width: 100%; }
+    .content .form-grid { grid-template-columns: minmax(0, 1fr); }
+    .content .form-grid > .span-2 { grid-column: auto; }
 }
 
 /* Keep very wide screens readable without creating giant, stretched controls. */

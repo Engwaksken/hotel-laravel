@@ -29,8 +29,9 @@
             return asset('storage/'.$path);
         };
 
-        $logoUrl = $brandingUrl($settings['logo_path'] ?? null);
-        $faviconUrl = $brandingUrl($settings['favicon_path'] ?? null);
+        $logoUrl = \App\Support\BrandingAsset::url($settings['logo_path'] ?? null);
+        $faviconPath = $settings['favicon_path'] ?? null;
+        $faviconUrl = \App\Support\BrandingAsset::url($faviconPath);
 
         $routeExists = static fn (string $name): bool =>
             \Illuminate\Support\Facades\Route::has($name);
@@ -48,6 +49,8 @@
         <link
             rel="icon"
             href="{{ $faviconUrl }}"
+            type="{{ \App\Support\BrandingAsset::mimeType($faviconPath) }}"
+            sizes="any"
         >
     @endif
 
