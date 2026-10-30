@@ -599,5 +599,6 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 
+<script src="{{ asset('js/form-placeholders.js') }}?v={{ @filemtime(public_path('js/form-placeholders.js')) ?: time() }}" defer></script>
 </body>
 </html>

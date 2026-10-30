@@ -317,6 +317,7 @@
     <x-hotel-guest-tools />
 @endif
 
+<script src="{{ asset('js/form-placeholders.js') }}?v={{ @filemtime(public_path('js/form-placeholders.js')) ?: time() }}" defer></script>
 @stack('scripts')
 
 </body>

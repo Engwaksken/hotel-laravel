@@ -372,5 +372,6 @@
         </div>
     </section>
 </main>
+<script src="{{ asset('js/form-placeholders.js') }}?v={{ @filemtime(public_path('js/form-placeholders.js')) ?: time() }}" defer></script>
 </body>
 </html>

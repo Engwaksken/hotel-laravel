@@ -87,6 +87,8 @@ input[type="reset"] {
     max-width: 100%;
     cursor: pointer;
 }
+input::placeholder,
+textarea::placeholder { color: var(--hms-muted, #74808b); opacity: .72; }
 .inline-form {
     display: flex;
     align-items: end;

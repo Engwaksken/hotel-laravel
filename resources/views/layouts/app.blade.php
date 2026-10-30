@@ -1282,6 +1282,11 @@
     src="{{ asset('js/hms.js') }}?v={{ @filemtime(public_path('js/hms.js')) ?: time() }}"
 ></script>
 
+<script
+    src="{{ asset('js/form-placeholders.js') }}?v={{ @filemtime(public_path('js/form-placeholders.js')) ?: time() }}"
+    defer
+></script>
+
 @if(file_exists(public_path('js/hms-modals.js')))
 <script
     src="{{ asset('js/hms-modals.js') }}?v={{ @filemtime(public_path('js/hms-modals.js')) ?: time() }}"
