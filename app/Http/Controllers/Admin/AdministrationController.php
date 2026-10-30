@@ -237,19 +237,22 @@ class AdministrationController extends Controller
         $pid = $this->propertyId($request);
 
         $data = $request->validate([
-            'gateway' => 'required|in:mtn_momo,airtel_money,pesapal,flutterwave,card,bank_transfer',
+            'gateway' => 'required_without:provider|in:mtn_momo,airtel_money,pesapal,flutterwave,card,bank_transfer',
+            'provider' => 'required_without:gateway|in:mtn_momo,airtel_money,pesapal,flutterwave,card,bank_transfer',
             'label' => 'required',
         ]);
 
+        $gateway = $data['gateway'] ?? $data['provider'];
+
         $existing = PaymentGatewayConfig::firstOrNew([
             'property_id' => $pid,
-            'gateway' => $data['gateway'],
+            'gateway' => $gateway,
         ]);
 
         $credentials = $existing->credentials ?? [];
 
         foreach ([
-            'client_id', 'client_secret', 'api_key', 'api_user',
+            'client_id', 'client_secret', 'api_key', 'api_user', 'secret_key',
             'subscription_key', 'consumer_key', 'consumer_secret',
             'webhook_secret', 'ipn_id',
         ] as $key) {
@@ -257,13 +260,24 @@ class AdministrationController extends Controller
                 $credentials[$key] = $request->input($key);
             }
         }
+        foreach (['username' => 'api_user', 'password' => 'client_secret'] as $input => $key) {
+            if ($request->filled($input) && ! isset($credentials[$key])) {
+                $credentials[$key] = $request->input($input);
+            }
+        }
+
+        $settings = array_filter([
+            'currency' => $request->input('currency', 'UGX'),
+            'base_url' => $request->input('base_url'),
+            'country' => $request->input('country'),
+        ], fn ($value) => filled($value));
 
         $existing->fill([
             'label' => $data['label'],
-            'enabled' => $request->boolean('enabled'),
+            'enabled' => $request->boolean('enabled', $request->boolean('is_active', false)),
             'sandbox' => $request->boolean('sandbox'),
             'credentials' => $credentials,
-            'settings' => ['currency' => $request->input('currency', 'UGX')],
+            'settings' => $settings,
         ])->save();
 
         $this->done($pid, 'payments', $request);

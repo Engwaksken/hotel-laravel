@@ -475,7 +475,7 @@
 
                     <div class="form-group">
                         <label for="gateway-api-key">
-                            API key
+                            API key / Flutterwave secret key
                         </label>
 
                         <div class="password-field">
@@ -497,6 +497,41 @@
                                 <i class="fas fa-eye"></i>
                             </button>
                         </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="gateway-client-id">Client ID (Airtel)</label>
+                        <input id="gateway-client-id" type="password" name="client_id" autocomplete="new-password" placeholder="Leave blank to keep saved value">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="gateway-client-secret">Client secret (Airtel)</label>
+                        <input id="gateway-client-secret" type="password" name="client_secret" autocomplete="new-password" placeholder="Leave blank to keep saved value">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="gateway-consumer-key">Consumer key (Pesapal)</label>
+                        <input id="gateway-consumer-key" type="password" name="consumer_key" autocomplete="new-password" placeholder="Leave blank to keep saved value">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="gateway-consumer-secret">Consumer secret (Pesapal)</label>
+                        <input id="gateway-consumer-secret" type="password" name="consumer_secret" autocomplete="new-password" placeholder="Leave blank to keep saved value">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="gateway-api-user">MTN API user</label>
+                        <input id="gateway-api-user" type="password" name="api_user" autocomplete="new-password" placeholder="Leave blank to keep saved value">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="gateway-webhook-secret">Flutterwave webhook secret</label>
+                        <input id="gateway-webhook-secret" type="password" name="webhook_secret" autocomplete="new-password" placeholder="Leave blank to keep saved value">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="gateway-base-url">API base URL (optional)</label>
+                        <input id="gateway-base-url" type="url" name="base_url" placeholder="Leave blank for provider default">
                     </div>
 
                     <div class="form-group">
@@ -575,7 +610,7 @@
                     <label class="switch-row">
                         <input
                             type="checkbox"
-                            name="is_active"
+                            name="enabled"
                             value="1"
                             @checked(old('is_active', true))
                         >

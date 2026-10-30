@@ -39,7 +39,7 @@ class ReconcilePayments extends Command
 
             try {
                 $verifyReference = $this->verificationReference($payment, $gateway);
-                $result = $manager->gateway($gateway)->verify($verifyReference);
+                $result = $manager->gateway($gateway, (int) $payment->property_id)->verify($verifyReference);
 
                 $remoteStatus = strtolower(trim((string) ($result['status'] ?? 'unknown')));
                 $remoteAmount = array_key_exists('amount', $result) ? (float) $result['amount'] : null;

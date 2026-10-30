@@ -7,7 +7,7 @@
 5. Verify Uganda statutory tax configuration with the hotel's accountant before enabling a tax rule; the seeder intentionally creates VAT disabled at 0 rather than hard-coding a legal rate.
 6. Run room/rate CSV imports on staging first. Review `data_import_runs` failures.
 7. Configure queue workers and scheduler. Run `php artisan hotel:health-check --store`.
-8. Create and verify a full backup. Run a restore **dry-run**. Perform any live restore only in a maintenance window against a verified recovery plan.
+8. Create and verify a full backup. Run a restore **dry-run**. The current live restore worker is database-only; file/full live restores are blocked until file payload restoration is implemented and tested. Perform any database live restore only in a maintenance window against a verified recovery plan.
 9. Complete Front Desk → POS room charge → payment → checkout → housekeeping E2E test.
 10. Complete procurement → GRN → stock → supplier invoice/payment → ledger test.
 11. Run Night Audit on a staging business date and verify the next business date opens correctly.

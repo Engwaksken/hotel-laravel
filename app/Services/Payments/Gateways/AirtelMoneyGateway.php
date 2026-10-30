@@ -1,7 +1,7 @@
 <?php
 namespace App\Services\Payments\Gateways;
 class AirtelMoneyGateway extends AbstractHttpGateway{
- private function cfg(string $k){return config("payment_gateways.airtel_momo.$k");}
+ private function cfg(string $k){return $this->setting($k, config("payment_gateways.airtel_momo.$k"));}
  private function token():string{$r=$this->http()->post(rtrim($this->cfg('base_url'),'/').'/auth/oauth2/token',['client_id'=>$this->required($this->cfg('client_id'),'AIRTEL_MONEY_CLIENT_ID'),'client_secret'=>$this->required($this->cfg('client_secret'),'AIRTEL_MONEY_CLIENT_SECRET'),'grant_type'=>'client_credentials'])->throw()->json();return $this->required(data_get($r,'access_token'),'Airtel access token');}
  private function headers():array{return ['Authorization'=>'Bearer '.$this->token(),'X-Country'=>$this->cfg('country'),'X-Currency'=>$this->cfg('currency')];}
  public function initiate(array $p):array{$payload=['reference'=>$p['reference'],'subscriber'=>['country'=>$this->cfg('country'),'currency'=>$this->cfg('currency'),'msisdn'=>preg_replace('/\D/','',$p['phone']??'')],'transaction'=>['amount'=>(float)$p['amount'],'country'=>$this->cfg('country'),'currency'=>$this->cfg('currency'),'id'=>$p['reference']]];$r=$this->http($this->headers())->post(rtrim($this->cfg('base_url'),'/').'/merchant/v1/payments/',$payload)->throw()->json();return ['mode'=>'push','gateway'=>'airtel_momo','gateway_reference'=>$p['reference'],'response'=>$r];}

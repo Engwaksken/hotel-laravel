@@ -92,7 +92,7 @@ class PublicBookingPaymentController extends Controller
         ];
 
         try {
-            $checkout = $manager->gateway($method)->initiate($payload);
+            $checkout = $manager->gateway($method, (int) $payment->property_id)->initiate($payload);
             $gatewayReference = $checkout['gateway_reference'] ?? null;
 
             $payment->update([

@@ -10,9 +10,12 @@
 - Test payroll approval/payment and verify balanced journals.
 - Test corporate credit limit/LPO enforcement and partial receipts.
 - Test all configured payment gateways in sandbox and verify callback idempotency.
+- Configure Flutterwave's `verif-hash` webhook secret in the property gateway settings or `FLUTTERWAVE_WEBHOOK_SECRET`; verify unsigned callbacks are rejected and repeated callbacks do not duplicate payment transactions.
+- Save each property's gateway credentials and enablement in Administration → Configuration → Payment gateways; verify checkout and reconciliation use that property's credentials, and disabled profiles reject payment attempts.
 - Confirm card details are never persisted by the HMS.
 - Run night audit across midnight and verify business-date rollover.
 - Run a full backup, confirm `successful`, checksum and `verified_at`, then perform a restore drill on staging.
+- Until file payload restoration is implemented and tested, use dry-runs for file/full backups; live restores are restricted to database-only backups.
 - Confirm failed queue jobs surface in System Health.
 - Confirm secret system settings are masked in the UI.
 - Confirm role permissions and per-user denies are honoured.
