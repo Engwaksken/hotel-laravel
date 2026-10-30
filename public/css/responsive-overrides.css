@@ -18,12 +18,20 @@
 .report-filter { display: flex; align-items: end; gap: 12px; flex-wrap: wrap; }
 .report-filter label { margin: 0; }
 .report-summary .card b { float: right; }
+.tab-buttons { display: flex; gap: 8px; overflow-x: auto; padding: 2px 0 10px; margin-bottom: 10px; }
+.tab-buttons .btn { flex: 0 0 auto; white-space: nowrap; }
+.tab-buttons .btn.active { background: var(--hms-primary, #0f766e); color: #fff; }
+.report-tab-panel[hidden], .minibar-tab-panel[hidden], .procurement-report-panel[hidden] { display: none !important; }
+.procurement-period-filter { align-items: end; }
+.procurement-period-filter label { margin: 0; }
+.modal-wide { width: min(960px, calc(100vw - 32px)); max-width: 100%; }
 
 @media (max-width: 700px) {
     .content { padding: 12px; }
     .report-actions, .report-actions .btn { width: 100%; }
     .report-filter > * { flex: 1 1 100%; }
     .report-filter .btn { width: 100%; }
+    .procurement-period-filter > * { flex: 1 1 calc(50% - 8px); }
     .report-summary .card b { float: none; display: block; margin-top: 3px; }
 }
 
