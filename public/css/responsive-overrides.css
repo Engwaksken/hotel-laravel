@@ -45,6 +45,74 @@
 .procurement-period-filter label { margin: 0; }
 .modal-wide { width: min(960px, calc(100vw - 32px)); max-width: 100%; }
 
+/* Consistent form actions and controls across legacy and newer form markup. */
+.actions,
+.page-actions,
+.page-head .actions,
+.hms-modal-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.page-actions { margin: 0 0 12px; }
+.actions > .btn,
+.page-actions > .btn,
+.hms-modal-actions > .btn { flex: 0 0 auto; width: auto; }
+.form-grid > .actions,
+.form-grid > .hms-modal-actions,
+.form-grid > div:last-child:has(> button[type="submit"], > input[type="submit"]) {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.form-grid > button.btn,
+.form-grid > input[type="submit"],
+.form-grid > input[type="button"] {
+    grid-column: 1 / -1;
+    justify-self: end;
+    width: auto;
+}
+input[type="submit"],
+input[type="button"],
+input[type="reset"] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+    max-width: 100%;
+    cursor: pointer;
+}
+.inline-form {
+    display: flex;
+    align-items: end;
+    flex-wrap: wrap;
+    gap: 8px;
+    min-width: 0;
+}
+.inline-form > input,
+.inline-form > select,
+.inline-form > textarea {
+    flex: 1 1 140px;
+    width: auto;
+    min-width: min(140px, 100%);
+    margin-top: 0;
+}
+.inline-form > .btn,
+.inline-form > button,
+.inline-form > input[type="submit"] { flex: 0 0 auto; width: auto; }
+.modal-box form:not(.form-grid):not(.stack) > .btn:last-child {
+    display: flex;
+    width: fit-content;
+    margin: 12px 0 0 auto;
+}
+.modal-box .form-grid { align-items: start; }
+.modal-box .form-grid > label { min-width: 0; }
+
 @media (max-width: 700px) {
     .content { padding: 12px; }
     .report-actions, .report-actions .btn { width: 100%; }
@@ -67,6 +135,29 @@
     .page-head .actions, .page-head .btn { max-width: 100%; }
     .content .form-grid { grid-template-columns: minmax(0, 1fr); }
     .content .form-grid > .span-2 { grid-column: auto; }
+    .content .form-grid > .actions,
+    .content .form-grid > .hms-modal-actions,
+    .content .form-grid > div:last-child:has(> button[type="submit"], > input[type="submit"]) {
+        grid-column: 1 / -1;
+        justify-content: stretch;
+    }
+    .content .form-grid > .actions > .btn,
+    .content .form-grid > .hms-modal-actions > .btn,
+    .content .form-grid > div:last-child:has(> button[type="submit"], > input[type="submit"]) > button {
+        flex: 1 1 auto;
+        width: 100%;
+    }
+    .inline-form { align-items: stretch; flex-direction: column; }
+    .inline-form > input,
+    .inline-form > select,
+    .inline-form > textarea,
+    .inline-form > .btn,
+    .inline-form > button { width: 100%; min-width: 0; }
+    .modal-box form:not(.form-grid):not(.stack) > .btn:last-child { width: 100%; }
+    .hms-modal-actions { align-items: stretch; }
+    .hms-modal-actions > .btn { flex: 1 1 100%; width: 100%; }
+    .page-head .actions { width: 100%; }
+    .page-head .actions > .btn { flex: 1 1 auto; }
 }
 
 /* Keep very wide screens readable without creating giant, stretched controls. */
