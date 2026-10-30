@@ -1951,10 +1951,6 @@ body.modal-open{overflow:hidden}.hms-crud-modal{z-index:180}.hms-crud-modal-box{
 ========================================================= */
 
 :root {
-    --hms-primary: var(--hms-primary, #0f766e);
-    --hms-secondary: var(--hms-secondary, #134e4a);
-    --hms-accent: var(--hms-accent, #14b8a6);
-
     --hms-sidebar-width: 258px;
     --hms-topbar-height: 68px;
     --hms-sidebar-bg: #064e45;
@@ -2787,8 +2783,8 @@ textarea {
 .sidebar .nav-group-items a.active:visited,
 .sidebar .nav-group-items a.active:hover,
 .sidebar .nav-group-items a.active:focus {
-    background: #dff5f1 !important;
-    color: #064e45 !important;
+    background: var(--hms-primary-soft) !important;
+    color: var(--hms-primary-dark) !important;
     border: 1px solid rgba(15, 118, 110, .12) !important;
     box-shadow: none !important;
 }
@@ -2798,7 +2794,7 @@ textarea {
 .sidebar .nav-group-items a.active small,
 .sidebar .nav-group-items a.active i,
 .sidebar .nav-group-items a.active .nav-icon {
-    color: #064e45 !important;
+    color: var(--hms-primary-dark) !important;
 }
 
 .sidebar .nav-group-items a.active .nav-icon {

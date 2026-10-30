@@ -27,6 +27,15 @@
             '#14b8a6'
         );
 
+        $normaliseBrandColor = static fn ($color, string $fallback): string =>
+            is_string($color) && preg_match('/^#[0-9a-fA-F]{6}$/', $color)
+                ? $color
+                : $fallback;
+
+        $primaryColor = $normaliseBrandColor($primaryColor, '#0f766e');
+        $secondaryColor = $normaliseBrandColor($secondaryColor, '#134e4a');
+        $accentColor = $normaliseBrandColor($accentColor, '#14b8a6');
+
         $logoPath = \App\Support\SystemSetting::get('logo_path');
         $faviconPath = \App\Support\SystemSetting::get('favicon_path');
 
@@ -107,14 +116,6 @@
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
     >
 
-    <style>
-        :root {
-            --hms-primary: {{ $primaryColor }};
-            --hms-secondary: {{ $secondaryColor }};
-            --hms-accent: {{ $accentColor }};
-        }
-    </style>
-
     <link
         rel="stylesheet"
         href="{{ asset('css/hms.css') }}?v={{ @filemtime(public_path('css/hms.css')) ?: time() }}"
@@ -142,6 +143,20 @@
             href="{{ asset('css/hms-modals-exports.css') }}?v={{ @filemtime(public_path('css/hms-modals-exports.css')) ?: time() }}"
         >
     @endif
+
+    {{-- Load after the theme stylesheets so defaults cannot override saved branding. --}}
+    <style id="hms-system-branding">
+        :root {
+            --hms-primary: {{ $primaryColor }};
+            --hms-primary-dark: color-mix(in srgb, {{ $primaryColor }} 82%, #000);
+            --hms-primary-soft: color-mix(in srgb, {{ $primaryColor }} 10%, #fff);
+            --hms-secondary: {{ $secondaryColor }};
+            --hms-accent: {{ $accentColor }};
+            --hms-sidebar: {{ $secondaryColor }};
+            --hms-sidebar-bg: {{ $secondaryColor }};
+            --hms-sidebar-hover: color-mix(in srgb, {{ $secondaryColor }} 86%, #fff);
+        }
+    </style>
 
     @stack('styles')
 </head>
