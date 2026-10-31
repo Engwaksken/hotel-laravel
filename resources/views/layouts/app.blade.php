@@ -127,9 +127,9 @@
             --hms-primary-soft: color-mix(in srgb, {{ $primaryColor }} 10%, #fff);
             --hms-secondary: {{ $secondaryColor }};
             --hms-accent: {{ $accentColor }};
-            --hms-sidebar: {{ $secondaryColor }};
-            --hms-sidebar-bg: {{ $secondaryColor }};
-            --hms-sidebar-hover: color-mix(in srgb, {{ $secondaryColor }} 86%, #fff);
+            --hms-sidebar: {{ $primaryColor }};
+            --hms-sidebar-bg: {{ $primaryColor }};
+            --hms-sidebar-hover: color-mix(in srgb, {{ $primaryColor }} 86%, #fff);
         }
     </style>
 

@@ -21,15 +21,15 @@
 .tab-buttons { display: flex; gap: 8px; overflow-x: auto; padding: 2px 0 10px; margin-bottom: 10px; }
 .tab-buttons .btn { flex: 0 0 auto; white-space: nowrap; }
 .tab-buttons .btn.active { background: var(--hms-primary, #0f766e); color: #fff; }
-.module-tabs .module-tab.active { box-shadow: inset 0 -2px 0 var(--hms-accent, #14b8a6); }
+.module-tabs .module-tab.active { box-shadow: inset 0 -2px 0 var(--hms-primary, #0f766e); }
 .sidebar .brand-mark { background: var(--hms-accent, #14b8a6); color: #fff; }
 .sidebar {
     height: 100vh;
     height: 100dvh;
     background: linear-gradient(
         180deg,
-        var(--hms-secondary, #134e4a) 0%,
-        color-mix(in srgb, var(--hms-secondary, #134e4a) 72%, var(--hms-primary, #0f766e)) 100%
+        var(--hms-primary, #0f766e) 0%,
+        color-mix(in srgb, var(--hms-primary, #0f766e) 82%, #000) 100%
     ) !important;
     overscroll-behavior: contain;
 }

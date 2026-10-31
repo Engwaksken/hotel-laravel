@@ -363,7 +363,7 @@ img {
 
 .stat,
 .stat-card {
-    --accent: #087166;
+    --accent: var(--hms-primary);
     position: relative;
     min-width: 0;
     min-height: 92px;
@@ -463,71 +463,23 @@ img {
     line-height: 1.35;
 }
 
-/* Automatic colour rotation */
-.stats > :nth-child(9n+1),
-.compact-stats > :nth-child(9n+1),
-.stats-grid > :nth-child(9n+1),
-.dashboard-stats > :nth-child(9n+1),
-.stat-grid > :nth-child(9n+1) { --accent: #087166; }
-
-.stats > :nth-child(9n+2),
-.compact-stats > :nth-child(9n+2),
-.stats-grid > :nth-child(9n+2),
-.dashboard-stats > :nth-child(9n+2),
-.stat-grid > :nth-child(9n+2) { --accent: #3578c6; }
-
-.stats > :nth-child(9n+3),
-.compact-stats > :nth-child(9n+3),
-.stats-grid > :nth-child(9n+3),
-.dashboard-stats > :nth-child(9n+3),
-.stat-grid > :nth-child(9n+3) { --accent: #7c5cc4; }
-
-.stats > :nth-child(9n+4),
-.compact-stats > :nth-child(9n+4),
-.stats-grid > :nth-child(9n+4),
-.dashboard-stats > :nth-child(9n+4),
-.stat-grid > :nth-child(9n+4) { --accent: #d9822b; }
-
-.stats > :nth-child(9n+5),
-.compact-stats > :nth-child(9n+5),
-.stats-grid > :nth-child(9n+5),
-.dashboard-stats > :nth-child(9n+5),
-.stat-grid > :nth-child(9n+5) { --accent: #2e8b57; }
-
-.stats > :nth-child(9n+6),
-.compact-stats > :nth-child(9n+6),
-.stats-grid > :nth-child(9n+6),
-.dashboard-stats > :nth-child(9n+6),
-.stat-grid > :nth-child(9n+6) { --accent: #c94b4b; }
-
-.stats > :nth-child(9n+7),
-.compact-stats > :nth-child(9n+7),
-.stats-grid > :nth-child(9n+7),
-.dashboard-stats > :nth-child(9n+7),
-.stat-grid > :nth-child(9n+7) { --accent: #168aa0; }
-
-.stats > :nth-child(9n+8),
-.compact-stats > :nth-child(9n+8),
-.stats-grid > :nth-child(9n+8),
-.dashboard-stats > :nth-child(9n+8),
-.stat-grid > :nth-child(9n+8) { --accent: #4f62bd; }
-
-.stats > :nth-child(9n+9),
-.compact-stats > :nth-child(9n+9),
-.stats-grid > :nth-child(9n+9),
-.dashboard-stats > :nth-child(9n+9),
-.stat-grid > :nth-child(9n+9) { --accent: #b98716; }
-
-/* Explicit colours */
-.stat-teal   { --accent: #087166 !important; }
-.stat-green  { --accent: #2e8b57 !important; }
-.stat-blue   { --accent: #3578c6 !important; }
-.stat-orange { --accent: #d9822b !important; }
-.stat-red    { --accent: #c94b4b !important; }
-.stat-purple { --accent: #7c5cc4 !important; }
-.stat-cyan   { --accent: #168aa0 !important; }
-.stat-indigo { --accent: #4f62bd !important; }
-.stat-gold   { --accent: #b98716 !important; }
+/* Dashboard stat accents follow the configured system primary colour.
+   Legacy colour modifiers (.stat-blue, .stat-red, ...) are kept as no-op
+   hooks so existing views stay valid, but they all resolve to the brand. */
+.stat,
+.stat-card,
+.hms-page-stat,
+.stat-teal,
+.stat-green,
+.stat-blue,
+.stat-orange,
+.stat-red,
+.stat-purple,
+.stat-cyan,
+.stat-indigo,
+.stat-gold {
+    --accent: var(--hms-primary);
+}
 
 /* =========================================================
    6. CARDS / PANELS / GRIDS
@@ -660,7 +612,7 @@ img {
 .module-tab:hover,
 .dashboard-tab:hover {
     color: var(--hms-primary);
-    background: #f7faf9 !important;
+    background: color-mix(in srgb, var(--hms-primary) 5%, #fff) !important;
 }
 
 .module-tab.active,
@@ -748,8 +700,8 @@ td small {
     gap: 4px;
     padding: 4px 7px;
     border-radius: 999px;
-    background: #e8f5f2;
-    color: #07655c;
+    background: var(--hms-primary-soft);
+    color: var(--hms-primary-dark);
     font-size: 9px;
     font-weight: 600;
     line-height: 1.2;
@@ -1925,7 +1877,7 @@ textarea:disabled {
 /* =========================================================
    24. GLOBAL DATA TOOLBARS / PAGINATION / MULTI-SELECTION
 ========================================================= */
-.hms-data-suite{margin:0 0 12px}.hms-page-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:0 0 10px}.hms-page-stat{--accent:#087166;display:flex;align-items:center;gap:9px;min-height:64px;padding:9px 11px;border:1px solid var(--hms-border);border-left:4px solid var(--accent);border-radius:9px;background:#fff;box-shadow:var(--hms-shadow-sm)}.hms-page-stat:nth-child(2){--accent:#3578c6}.hms-page-stat:nth-child(3){--accent:#7c5cc4}.hms-page-stat:nth-child(4){--accent:#d9822b}.hms-page-stat i{width:30px;height:30px;display:grid;place-items:center;border-radius:8px;background:color-mix(in srgb,var(--accent) 12%,white);color:var(--accent);font-size:12px}.hms-page-stat span{display:block;color:var(--hms-muted);font-size:8.5px;text-transform:uppercase;letter-spacing:.04em}.hms-page-stat b{display:block;margin-top:1px;font:700 15px Outfit,Poppins,sans-serif;color:#15212b}.hms-data-toolbar{display:flex;align-items:end;gap:8px;flex-wrap:wrap;margin:0 0 10px;padding:9px;border:1px solid var(--hms-border-soft);border-radius:9px;background:#fff}.hms-data-toolbar .hms-field{min-width:130px}.hms-data-toolbar .hms-search{flex:1 1 220px;min-width:180px}.hms-data-toolbar label{font-size:8.5px;text-transform:uppercase;letter-spacing:.04em;color:#73808b}.hms-data-toolbar input,.hms-data-toolbar select{min-height:32px;margin-top:3px;padding:6px 8px;font-size:10px}.hms-selection-info{display:inline-flex;align-items:center;gap:5px;min-height:32px;padding:0 9px;border-radius:7px;background:#eef8f6;color:#08675d;font-size:9.5px;font-weight:600}.hms-data-actions{display:flex;align-items:center;gap:6px;margin-left:auto}.hms-pagination{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:9px}.hms-pagination-info{color:var(--hms-muted);font-size:9.5px}.hms-pagination-buttons{display:flex;align-items:center;gap:4px}.hms-page-btn{min-width:30px;height:30px;padding:0 7px;border:1px solid #d8dee3;border-radius:7px;background:#fff;color:#35424d;font-size:9.5px;cursor:pointer}.hms-page-btn:hover:not(:disabled){border-color:#8bbcb5;color:#08675d;background:#f5fbfa}.hms-page-btn.active{border-color:#08675d;background:#08675d;color:#fff}.hms-page-btn:disabled{opacity:.45;cursor:not-allowed}.hms-row-select,.hms-select-all{width:14px;height:14px;min-height:0;margin:0;accent-color:#08675d}.hms-select-col{width:38px;text-align:center!important}.hms-selected-row{background:#f1faf8!important}.hms-no-results td{text-align:center!important;padding:24px!important;color:#7c8799!important}.hms-period-separator{align-self:center;padding-bottom:7px;color:#9aa3aa;font-size:10px}
+.hms-data-suite{margin:0 0 12px}.hms-page-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:0 0 10px}.hms-page-stat{--accent:var(--hms-primary);display:flex;align-items:center;gap:9px;min-height:64px;padding:9px 11px;border:1px solid var(--hms-border);border-left:4px solid var(--accent);border-radius:9px;background:#fff;box-shadow:var(--hms-shadow-sm)}.hms-page-stat i{width:30px;height:30px;display:grid;place-items:center;border-radius:8px;background:color-mix(in srgb,var(--accent) 12%,white);color:var(--accent);font-size:12px}.hms-page-stat span{display:block;color:var(--hms-muted);font-size:8.5px;text-transform:uppercase;letter-spacing:.04em}.hms-page-stat b{display:block;margin-top:1px;font:700 15px Outfit,Poppins,sans-serif;color:#15212b}.hms-data-toolbar{display:flex;align-items:end;gap:8px;flex-wrap:wrap;margin:0 0 10px;padding:9px;border:1px solid var(--hms-border-soft);border-radius:9px;background:#fff}.hms-data-toolbar .hms-field{min-width:130px}.hms-data-toolbar .hms-search{flex:1 1 220px;min-width:180px}.hms-data-toolbar label{font-size:8.5px;text-transform:uppercase;letter-spacing:.04em;color:#73808b}.hms-data-toolbar input,.hms-data-toolbar select{min-height:32px;margin-top:3px;padding:6px 8px;font-size:10px}.hms-selection-info{display:inline-flex;align-items:center;gap:5px;min-height:32px;padding:0 9px;border-radius:7px;background:#eef8f6;color:#08675d;font-size:9.5px;font-weight:600}.hms-data-actions{display:flex;align-items:center;gap:6px;margin-left:auto}.hms-pagination{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:9px}.hms-pagination-info{color:var(--hms-muted);font-size:9.5px}.hms-pagination-buttons{display:flex;align-items:center;gap:4px}.hms-page-btn{min-width:30px;height:30px;padding:0 7px;border:1px solid #d8dee3;border-radius:7px;background:#fff;color:#35424d;font-size:9.5px;cursor:pointer}.hms-page-btn:hover:not(:disabled){border-color:#8bbcb5;color:#08675d;background:#f5fbfa}.hms-page-btn.active{border-color:#08675d;background:#08675d;color:#fff}.hms-page-btn:disabled{opacity:.45;cursor:not-allowed}.hms-row-select,.hms-select-all{width:14px;height:14px;min-height:0;margin:0;accent-color:#08675d}.hms-select-col{width:38px;text-align:center!important}.hms-selected-row{background:#f1faf8!important}.hms-no-results td{text-align:center!important;padding:24px!important;color:#7c8799!important}.hms-period-separator{align-self:center;padding-bottom:7px;color:#9aa3aa;font-size:10px}
 
 /* Password eye toggle */
 .password-field-wrap{position:relative}.password-field-wrap input{padding-right:38px}.password-toggle{position:absolute;right:4px;bottom:4px;width:30px;height:28px;display:grid;place-items:center;border:0;border-radius:6px;background:transparent;color:#74808b;cursor:pointer}.password-toggle:hover{background:#eef5f4;color:#08675d}.password-toggle i{font-size:11px}
@@ -2785,7 +2737,7 @@ textarea {
 .sidebar .nav-group-items a.active:focus {
     background: var(--hms-primary-soft) !important;
     color: var(--hms-primary-dark) !important;
-    border: 1px solid rgba(15, 118, 110, .12) !important;
+    border: 1px solid color-mix(in srgb, var(--hms-primary) 12%, transparent) !important;
     box-shadow: none !important;
 }
 

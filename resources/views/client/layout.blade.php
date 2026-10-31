@@ -7,6 +7,25 @@
     <title>@yield('title', 'Guest Portal') · {{ config('app.name', 'Hotel Management System') }}</title>
     <link rel="stylesheet" href="{{ asset('css/client-portal.css') }}?v={{ @filemtime(public_path('css/client-portal.css')) ?: time() }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    @php
+        $brandColor = static function (string $key, string $fallback): string {
+            $color = \App\Support\SystemSetting::get($key, $fallback);
+
+            return is_string($color) && preg_match('/^#[0-9a-fA-F]{6}$/', $color) ? $color : $fallback;
+        };
+        $primaryColor = $brandColor('primary_color', '#0f766e');
+        $secondaryColor = $brandColor('secondary_color', '#134e4a');
+        $accentColor = $brandColor('accent_color', '#14b8a6');
+    @endphp
+    {{-- Load after the portal stylesheet so saved branding overrides the defaults. --}}
+    <style id="hms-system-branding">
+        :root {
+            --p: {{ $primaryColor }};
+            --s: {{ $secondaryColor }};
+            --a: {{ $accentColor }};
+            --p-soft: color-mix(in srgb, {{ $primaryColor }} 10%, #fff);
+        }
+    </style>
 </head>
 <body>
 <header class="client-topbar">
